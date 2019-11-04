@@ -8,8 +8,9 @@
     "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types",
-      "src/index.d.ts",
-    ]
+      "src/global.d.ts",
+    ],
+    "allowUmdGlobalAccess": true
   },
   "exclude": [
     "node_modules"

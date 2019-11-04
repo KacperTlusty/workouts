@@ -1,27 +1,30 @@
-import { makeCreate, makeFindAll } from './controller'
+import { makeCreate, makeFindAll, makeFindById, makeDeleteById } from './controller'
 import { makeFakeWorkoutArgs } from '../../tests/workout'
 import { fakeExercise } from '../../tests/exercise'
+import { Workout } from './model'
 
-const mockWorkoutFactory = jest.fn((workoutArgs: MakeWorkoutArgs): Workout => {
-  const exercises = workoutArgs.exercises.map(id => (fakeExercise({ id })))
-  return {
-    id: workoutArgs.id,
-    name: workoutArgs.name,
-    getExercises: (): Exercise[] => exercises,
-    userId: workoutArgs.userId,
-    addExercise: (): void => {}
-  }
-})
 describe('Workout controller test suite', () => {
   let mockDb: WorkoutDb
-  describe('getAll action', () => {
-    beforeEach(() => {
-      mockDb = {
-        create: jest.fn(),
-        findById: jest.fn(),
-        findAll: jest.fn()
+  let mockWorkoutFactory: (MakeWorkoutArgs) => Workout
+  beforeEach(() => {
+    mockDb = {
+      create: jest.fn(),
+      findById: jest.fn(),
+      findAll: jest.fn(),
+      deleteById: jest.fn()
+    }
+    mockWorkoutFactory = jest.fn((workoutArgs: MakeWorkoutArgs): Workout => {
+      const exercises = workoutArgs.exercises.map(id => (fakeExercise({ id })))
+      return {
+        id: workoutArgs.id,
+        name: workoutArgs.name,
+        getExercises: (): Exercise[] => exercises,
+        userId: workoutArgs.userId,
+        addExercise: (): void => {}
       }
     })
+  })
+  describe('getAll action', () => {
     test('should return all workouts', async (done) => {
       const workoutMocks = [
         {
@@ -64,13 +67,6 @@ describe('Workout controller test suite', () => {
   })
   describe('create action', () => {
     const workoutArgs = makeFakeWorkoutArgs()
-    beforeEach(() => {
-      mockDb = {
-        create: jest.fn(),
-        findById: jest.fn(),
-        findAll: jest.fn()
-      }
-    })
     test('should call db create', async (done) => {
       mockDb.create = jest.fn<any, any>(() => 'fake result')
       const createWorkout = makeCreate(
@@ -110,6 +106,49 @@ describe('Workout controller test suite', () => {
         exercises: [],
         userId: 'fake'
       })
+      done()
+    })
+  }),
+  describe('getById', () => {
+    test('should return found object and parse it', async (done) => {
+      mockDb.findById = jest.fn(() => Promise.resolve({
+        id: 'fake id',
+        name: 'fake name',
+        exercises: ['1', '2'],
+        userId: 'fake user id'
+      }))
+      const getExerciseById = makeFindById(
+        mockDb,
+        mockWorkoutFactory
+      )
+      const result = await getExerciseById('fake id')
+      expect(result).toEqual({
+        id: 'fake id',
+        name: 'fake name',
+        exercises: ['1', '2'],
+        userId: 'fake user id'
+      })
+      expect(mockWorkoutFactory).toHaveBeenCalledTimes(1)
+      done()
+    })
+    test('should return found object', async (done) => {
+      mockDb.findById = jest.fn(() => Promise.resolve(null))
+      const getExerciseById = makeFindById(
+        mockDb,
+        mockWorkoutFactory
+      )
+      const result = await getExerciseById('fake id')
+      expect(result).toEqual(null)
+      done()
+    })
+  })
+  describe('deleteById', () => {
+    test('should use mapper', async (done) => {
+      mockDb.deleteById = jest.fn(async () => Promise.resolve('Object removed.'))
+      const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
+      expect(await deleteById('fake by id')).toEqual('Object removed.')
+      expect(mockDb.deleteById).toHaveBeenCalledWith('fake by id')
+      expect(mockDb.deleteById).toHaveBeenCalledTimes(1)
       done()
     })
   })

@@ -5,7 +5,7 @@ export function makeCreate (
   return async function create (workoutArgs: MakeWorkoutArgs): Promise<WorkoutDbEntity> {
     const workout = makeWorkout(workoutArgs)
 
-    const existingWorkout = db.findById(workout.id)
+    const existingWorkout = await db.findById(workout.id)
     if (existingWorkout) {
       return existingWorkout
     }
@@ -25,7 +25,7 @@ export function makeFindAll (
 ): () => Promise<WorkoutJson[]> {
   return async function findAll (): Promise<WorkoutJson[]> {
     const dbWorkouts = await db.findAll()
-    const result = dbWorkouts
+    return dbWorkouts
       .map(dbWorkout => makeWorkout(dbWorkout))
       .map(workout => ({
         id: workout.id,
@@ -33,11 +33,43 @@ export function makeFindAll (
         exercises: workout.getExercises().map(exercise => exercise.id),
         name: workout.name
       }))
-    return Promise.resolve(result)
+  }
+}
+
+export function makeFindById (
+  db: WorkoutDb,
+  makeWorkout: (MakeWorkoutArgs) => Workout
+): (string) => Promise<WorkoutJson> {
+  return async function findById (id: string): Promise<WorkoutJson> {
+    const row = await db.findById(id)
+
+    if (!row) {
+      return Promise.resolve(null)
+    }
+
+    const workout = makeWorkout(row)
+    
+    return Promise.resolve({
+      id: workout.id,
+      name: workout.name,
+      exercises: workout.getExercises().map(exercise => exercise.id),
+      userId: workout.userId
+    })
+  }
+}
+
+export function makeDeleteById (
+  db: WorkoutDb,
+  makeWorkout: (MakeWorkoutArgs) => Workout
+): (string) => Promise<string> {
+  return async function deleteById(id: string): Promise<string> {
+    return db.deleteById(id)
   }
 }
 
 export default {
   makeCreate,
-  makeFindAll
+  makeFindAll,
+  makeFindById,
+  makeDeleteById
 }

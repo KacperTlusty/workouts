@@ -4,6 +4,14 @@ export interface CreateMakeWorkoutArgs {
   validateId: (string) => boolean
 }
 
+export interface Workout {
+  id: string;
+  getExercises: () => Exercise[];
+  addExercise: (Exercise) => void;
+  name: string;
+  userId?: string;
+} 
+
 export default function createMakeWorkout ({
   makeId,
   validateId

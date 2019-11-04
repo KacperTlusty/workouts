@@ -1,8 +1,10 @@
 import { Request, Response } from 'express'
 
-interface WorkoutController {
+export interface WorkoutController {
   getAll: () => Promise<WorkoutJson[]>;
   create: (MakeWorkoutArgs) => Promise<WorkoutJson>;
+  getById: (id: string) => Promise<WorkoutJson>;
+  deleteById: (id: string) => Promise<string>
 }
 
 export function makeGetAll ({
@@ -34,7 +36,31 @@ export function makeCreate ({
   }
 }
 
+export function makeGetById ({
+  getById
+}: WorkoutController) : (Request, Response) => Promise<Response> {
+  return async function getWorkoutById(req: Request, res: Response): Promise<Response> {
+    try {
+      const result = await getById(req.params.workoutId)
+      return res.status(200).json(result)
+    } catch (error) {
+      return res.status(500).json({ error: error.message })
+    }
+  }
+}
+
+export function makeDeleteById ({
+  deleteById
+}: WorkoutController): (Request, Response) => Promise<Response> {
+  return async function deleteWorkoutById (req: Request, res: Response): Promise<Response> {
+    const result = await deleteById(req.params.workoutId)
+    return res.status(200).json(result)
+  }
+}
+
 export default {
   makeCreate,
-  makeGetAll
+  makeGetAll,
+  makeGetById,
+  makeDeleteById
 }

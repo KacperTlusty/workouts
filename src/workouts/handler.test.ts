@@ -1,10 +1,28 @@
-import { makeGetAll, makeCreate } from './handler'
+import {
+  makeGetById,
+  makeGetAll,
+  makeCreate,
+  WorkoutController,
+  makeDeleteById
+} from './handler'
 import { Request, Response } from 'express'
 
+const controllerMock = (args: any): WorkoutController => Object.assign({
+  create: jest.fn(),
+  getAll: jest.fn(),
+  getById: jest.fn()
+}, args)
+
 describe('Workout request handlers', () => {
+  let mockResponse: any
+  beforeEach(() => {
+    mockResponse = {
+      status: jest.fn(() => mockResponse),
+      json: jest.fn(() => mockResponse)
+    }
+  })
   describe('GET /', () => {
     let getAll: (req: Request, res: Response) => Promise<Response>
-    let mockResponse: any
     let fakeWorkouts: WorkoutJson[]
     beforeEach(() => {
       fakeWorkouts = [{
@@ -15,16 +33,11 @@ describe('Workout request handlers', () => {
           'fake exercise id 2'
         ]
       }]
-      getAll = makeGetAll({
+      getAll = makeGetAll(controllerMock({
         getAll: async () => {
           return fakeWorkouts
-        },
-        create: async () => fakeWorkouts[0]
-      })
-      mockResponse = {
-        status: jest.fn(() => mockResponse),
-        json: jest.fn(() => mockResponse)
-      }
+        }
+      }))
     })
     test('should set status 200', async (done) => {
       await getAll(null, mockResponse)
@@ -39,12 +52,11 @@ describe('Workout request handlers', () => {
       done()
     })
     test('should throw 500 if controller throws', async (done) => {
-      getAll = makeGetAll({
+      getAll = makeGetAll(controllerMock({
         getAll: jest.fn(() => {
           throw new Error('fake error')
-        }),
-        create: jest.fn()
-      })
+        })
+      }))
       await getAll(null, mockResponse)
       expect(mockResponse.status).toHaveBeenCalledWith(500)
       expect(mockResponse.status).toHaveBeenCalledTimes(1)
@@ -55,7 +67,6 @@ describe('Workout request handlers', () => {
   })
   describe('/POST', () => {
     let mockRequest: any
-    let mockResponse: any
     beforeEach(() => {
       mockRequest = {
         body: {
@@ -63,21 +74,16 @@ describe('Workout request handlers', () => {
           userId: 'fake user id'
         }
       }
-      mockResponse = {
-        status: jest.fn(() => mockResponse),
-        json: jest.fn(() => mockResponse)
-      }
     })
     test('should create workout', async (done) => {
-      const create = makeCreate({
-        getAll: jest.fn(),
+      const create = makeCreate(controllerMock({
         create: jest.fn(() => Promise.resolve({
           id: 'fake id 1',
           name: 'fake name 1',
           userId: 'fake user 1',
           exercises: []
         }))
-      })
+      }))
       await create(mockRequest, mockResponse)
       expect(mockResponse.status).toHaveBeenCalledWith(200)
       expect(mockResponse.status).toHaveBeenCalledTimes(1)
@@ -95,13 +101,75 @@ describe('Workout request handlers', () => {
         getAll: jest.fn(),
         create: jest.fn(() => {
           throw new Error('fake error')
-        })
+        }),
+        getById: jest.fn(),
+        deleteById: jest.fn()
       })
       await create(mockRequest, mockResponse)
       expect(mockResponse.status).toHaveBeenCalledWith(500)
       expect(mockResponse.status).toHaveBeenCalledTimes(1)
       expect(mockResponse.json).toHaveBeenCalledTimes(1)
       expect(mockResponse.json).toHaveBeenCalledWith({ error: 'fake error' })
+      done()
+    })
+  })
+  describe('GET /:workoutId', () => {
+    let mockRequest: any
+    beforeEach(() => {
+      mockRequest = {
+        params: {
+          workoutId: 'fake workout id'
+        }
+      }
+    })
+    test('should return found workout', async (done) => {
+      const getByIdMock = jest.fn(() => 'fake workout')
+      const getById = makeGetById(controllerMock({
+        getById: getByIdMock
+      }))
+      await getById(mockRequest, mockResponse)
+      expect(mockResponse.status).toHaveBeenCalledTimes(1)
+      expect(mockResponse.status).toHaveBeenCalledWith(200)
+      expect(mockResponse.json).toHaveBeenCalledTimes(1)
+      expect(mockResponse.json).toHaveBeenCalledWith('fake workout')
+      expect(getByIdMock).toHaveBeenCalledWith('fake workout id')
+      expect(getByIdMock).toHaveBeenCalledTimes(1)
+      done()
+    })
+    test('should handle error', async (done) => {
+      const getByIdMock = jest.fn(() => {
+        throw new Error('fake error')
+      })
+      const getById = makeGetById(controllerMock({
+        getById: getByIdMock
+      }))
+      await getById(mockRequest, mockResponse)
+      expect(mockResponse.status).toHaveBeenCalledTimes(1)
+      expect(mockResponse.status).toHaveBeenCalledWith(500)
+      expect(mockResponse.json).toHaveBeenCalledWith({ error: 'fake error' })
+      expect(mockResponse.json).toHaveBeenCalledTimes(1)
+      done()
+    })
+  })
+  describe('DELETE /:workoutId', () => {
+    let mockRequest
+    beforeEach(() => {
+      mockRequest = {
+        params: {
+          workoutId: 'fake workout id'
+        }
+      }
+    })
+    test('should return operation status', async (done) => {
+      const removeByIdMock = jest.fn(() => 'Object removed.')
+      const deleteById = makeDeleteById(controllerMock({
+        deleteById: removeByIdMock
+      }))
+      await deleteById(mockRequest, mockResponse)
+      expect(mockResponse.status).toHaveBeenCalledTimes(1)
+      expect(mockResponse.status).toHaveBeenCalledWith(200)
+      expect(mockResponse.json).toHaveBeenCalledTimes(1)
+      expect(mockResponse.json).toHaveBeenCalledWith('Object removed.')
       done()
     })
   })

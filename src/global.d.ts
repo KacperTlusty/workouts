@@ -1,3 +1,7 @@
+// Type definitions for TEST 0.0.1
+// Project: TEST
+// Definitions by: Kcaper <test.com>
+
 declare interface Workout {
   id: string;
   getExercises: () => Exercise[];
@@ -46,9 +50,12 @@ declare interface WorkoutJson {
   exercises: string[];
   userId?: string;
 }
-
+/*~ Test
+ *~ Dyuoa
+ */
 declare interface WorkoutDb {
   create: (WorkoutDbEntity) => Promise<WorkoutDbEntity>;
   findById: (string) => Promise<WorkoutDbEntity>;
   findAll: () => Promise<WorkoutDbEntity[]>;
+  deleteById: (string) => Promise<string>;
 }

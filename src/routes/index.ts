@@ -11,4 +11,12 @@ workoutRouter.post('/', (request, response) => {
   return workoutHandlers.create(request, response)
 })
 
+workoutRouter.get('/:workoutId', (request, response) => {
+  return workoutHandlers.getById(request, response)
+})
+
+workoutRouter.delete('/:workoutId', (request, response) => {
+  return workoutHandlers.deleteById(request, response)
+})
+
 export default workoutRouter

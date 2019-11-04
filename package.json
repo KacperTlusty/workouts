@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon --inspect src/index.ts",
-    "start": "ts-node src/index.ts",
+    "start": "ts-node --files src/index.ts",
     "test": "jest --coverage",
     "test-watch": "jest --watch"
   },
@@ -43,6 +43,7 @@
     "jest": "^24.9.0",
     "nodemon": "^1.19.4",
     "ts-jest": "^24.1.0",
+    "ts-node": "^8.4.1",
     "typescript": "^3.6.4"
   },
   "jest": {
@@ -56,5 +57,6 @@
       "js",
       "json"
     ]
-  }
+  },
+  "types": "src/global.d.ts"
 }
