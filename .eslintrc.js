@@ -5,11 +5,13 @@ module.exports = {
     "jest/globals": true
   },
   extends: [
-    'standard'
+    'standard',
+    "plugin:@typescript-eslint/recommended"
   ],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly'
+    SharedArrayBuffer: 'readonly',
+    esModuleInterop: true
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -21,5 +23,13 @@ module.exports = {
     'jest'
   ],
   rules: {
-  }
+  },
+  overrides: [{
+    files: [
+      'src/**/*.test.ts'
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 0
+    }
+  }]
 }
