@@ -9,7 +9,7 @@ evn.config()
 const app = Express()
 const port = process.env.PORT
 
-app.options('*', cors())
+app.use(cors())
 app.use(bodyparser.json())
 
 app.get('/', (req, res) => res.send('dupa'))
