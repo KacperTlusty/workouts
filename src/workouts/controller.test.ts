@@ -29,12 +29,12 @@ describe('Workout controller test suite', () => {
       const workoutMocks = [
         {
           name: 'fake name 1',
-          id: 'fake id 1',
+          _id: 'fake id 1',
           exercises: []
         },
         {
           name: 'fake name 2',
-          id: 'fake id 2',
+          _id: 'fake id 2',
           exercises: [
             'fake exercise 1',
             'fake exercise 2'
@@ -68,7 +68,7 @@ describe('Workout controller test suite', () => {
   describe('create action', () => {
     const workoutArgs = makeFakeWorkoutArgs()
     test('should call db create', async (done) => {
-      mockDb.create = jest.fn<any, any>(() => 'fake result')
+      mockDb.create = jest.fn<any, any>((arg) => arg)
       const createWorkout = makeCreate(
         mockDb,
         mockWorkoutFactory
@@ -77,17 +77,22 @@ describe('Workout controller test suite', () => {
       expect(mockDb.create).toHaveBeenCalledTimes(1)
       expect(mockDb.findById).toHaveBeenCalledTimes(1)
       expect(mockDb.create).toHaveBeenCalledWith({
-        id: workoutArgs.id,
+        _id: workoutArgs.id,
         name: workoutArgs.name,
         exercises: workoutArgs.exercises,
         userId: workoutArgs.userId
       })
-      expect(result).toBe('fake result')
+      expect(result).toEqual({
+        id: workoutArgs.id,
+        userId: workoutArgs.userId,
+        name: workoutArgs.name,
+        exercises: workoutArgs.exercises
+      })
       done()
     })
     test('should return existing element if possible', async (done) => {
       mockDb.findById = jest.fn(() => Promise.resolve({
-        id: 'fake id',
+        _id: 'fake id',
         name: 'fake name',
         exercises: [],
         userId: 'fake'
@@ -112,7 +117,7 @@ describe('Workout controller test suite', () => {
   describe('getById', () => {
     test('should return found object and parse it', async (done) => {
       mockDb.findById = jest.fn(() => Promise.resolve({
-        id: 'fake id',
+        _id: 'fake id',
         name: 'fake name',
         exercises: ['1', '2'],
         userId: 'fake user id'

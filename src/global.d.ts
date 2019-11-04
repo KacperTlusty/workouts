@@ -11,7 +11,7 @@ declare interface Workout {
 }
 
 declare interface WorkoutDbEntity {
-  id: string;
+  _id: string;
   exercises: string[];
   name: string;
   userId?: string;

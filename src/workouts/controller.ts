@@ -1,21 +1,37 @@
+function toJson (entity: Workout): WorkoutJson {
+  return {
+    id: entity.id,
+    name: entity.name,
+    exercises: entity.getExercises().map(exercise => exercise.id),
+    userId: entity.userId
+  }
+}
+
 export function makeCreate (
   db: WorkoutDb,
   makeWorkout: (MakeWorkoutArgs) => Workout
 ) {
-  return async function create (workoutArgs: MakeWorkoutArgs): Promise<WorkoutDbEntity> {
+  return async function create (workoutArgs: MakeWorkoutArgs): Promise<WorkoutJson> {
     const workout = makeWorkout(workoutArgs)
 
     const existingWorkout = await db.findById(workout.id)
     if (existingWorkout) {
-      return existingWorkout
+      return toJson(makeWorkout({
+        id: existingWorkout._id,
+        name: existingWorkout.name,
+        exercises: existingWorkout.exercises,
+        userId: existingWorkout.userId
+      }))
     }
 
-    return db.create({
-      id: workout.id,
+    const created = await db.create({
+      _id: workout.id,
       userId: workout.userId,
       exercises: workout.getExercises().map(exercise => exercise.id),
       name: workout.name
     })
+    
+    return toJson(makeWorkout({ ...created, id: created._id }))
   }
 }
 
@@ -26,13 +42,13 @@ export function makeFindAll (
   return async function findAll (): Promise<WorkoutJson[]> {
     const dbWorkouts = await db.findAll()
     return dbWorkouts
-      .map(dbWorkout => makeWorkout(dbWorkout))
-      .map(workout => ({
-        id: workout.id,
-        userId: workout.userId,
-        exercises: workout.getExercises().map(exercise => exercise.id),
-        name: workout.name
+      .map(row => makeWorkout({
+        id: row._id,
+        name: row.name,
+        exercises: row.exercises,
+        userId: row.userId
       }))
+      .map(toJson)
   }
 }
 
@@ -47,14 +63,14 @@ export function makeFindById (
       return Promise.resolve(null)
     }
 
-    const workout = makeWorkout(row)
-    
-    return Promise.resolve({
-      id: workout.id,
-      name: workout.name,
-      exercises: workout.getExercises().map(exercise => exercise.id),
-      userId: workout.userId
+    const workout = makeWorkout({
+      id: row._id,
+      name: row.name,
+      exercises: row.exercises,
+      userId: row.userId
     })
+    
+    return Promise.resolve(toJson(workout))
   }
 }
 
