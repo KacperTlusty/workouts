@@ -24,18 +24,6 @@ describe('Exercise model', () => {
     test('should throw error when type is missing', () => {
       expect(() => model(fakeExercise({ type: null }))).toThrowError('type is missing')
     })
-    test('duration cannot be negative', () => {
-      expect(() => model(fakeExercise({ duration: -1 })))
-        .toThrowError('duration cannot be negative number')
-      expect(() => model(fakeExercise({ duration: 0 })))
-        .not.toThrowError()
-    })
-    test('breakDuration cannot be negative', () => {
-      expect(() => model(fakeExercise({ breakDuration: -1 })))
-        .toThrowError('breakDuration cannot be negative number')
-      expect(() => model(fakeExercise({ breakDuration: 0 })))
-        .not.toThrowError()
-    })
     test('should throw if invalid id is given', () => {
       expect(() => model(fakeExercise({ id: 'invalid' })))
         .toThrowError('invalid id')
@@ -59,8 +47,6 @@ describe('Exercise model', () => {
         name: mockExercise.name,
         type: mockExercise.type,
         difficulty: mockExercise.difficulty,
-        duration: mockExercise.duration,
-        breakDuration: mockExercise.breakDuration,
         picture: mockExercise.picture,
         mobility: mockExercise.mobility
       })

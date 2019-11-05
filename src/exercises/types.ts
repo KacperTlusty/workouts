@@ -4,8 +4,6 @@ export interface Exercise {
   id: string;
   name: string;
   type: string;
-  duration?: number;
-  breakDuration?: number;
   difficulty?: string;
   mobility?: string;
   picture?: string;
@@ -24,8 +22,6 @@ export interface ExerciseArgs {
   id?: string;
   name: string;
   type: string;
-  duration?: number;
-  breakDuration?: number;
   difficulty?: string;
   mobility?: string;
   picture?: string;
@@ -50,8 +46,6 @@ export interface ExerciseJson {
   id: string;
   name: string;
   type: string;
-  duration: number;
-  breakDuration: number;
   picture: string;
   difficulty: string;
   mobility: string;
@@ -61,8 +55,6 @@ export interface ExerciseDbEntity {
   _id: string;
   name: string;
   type: string;
-  duration: number;
-  breakDuration: number;
   picture: string;
   difficulty: string;
   mobility: string;
@@ -72,8 +64,6 @@ export interface ExerciseDbEntity {
 export interface MakeExerciseArgs {
   name: string;
   type: string;
-  duration?: number;
-  breakDuration?: number;
   picture?: string;
   difficulty?: string;
   mobility?: string;

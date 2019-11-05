@@ -4,7 +4,7 @@ import {
   makeCreate,
   makeDeleteById
 } from './handler'
-import { WorkoutController } from './handler.d'
+import { WorkoutController, WorkoutJson } from './types'
 import { Request, Response } from 'express'
 
 const controllerMock = (args: any): WorkoutController => Object.assign({

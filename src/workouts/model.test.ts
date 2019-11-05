@@ -1,5 +1,6 @@
 import cuid, { isCuid } from 'cuid'
 import createMakeWorkout from './model'
+import { MakeWorkoutArgs } from './types'
 import { makeFakeWorkoutArgs } from '../../tests/workout'
 import { fakeExercise } from '../../tests/exercise'
 

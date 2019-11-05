@@ -24,8 +24,6 @@ describe('Exercise controller', () => {
       name: arg.name,
       type: arg.type,
       difficulty: arg.difficulty,
-      breakDuration: arg.breakDuration,
-      duration: arg.duration,
       picture: arg.picture,
       mobility: arg.mobility,
       hash: 'fake hash',
@@ -36,8 +34,6 @@ describe('Exercise controller', () => {
           difficulty: this.difficulty,
           type: this.type,
           picture: this.picture,
-          breakDuration: this.breakDuration,
-          duration: this.duration,
           mobility: this.mobility
         }
       }
@@ -58,8 +54,6 @@ describe('Exercise controller', () => {
       expect(exerciseJson.type).toBe(exerciseMock.type)
       expect(exerciseJson.picture).toBe(exerciseMock.picture)
       expect(exerciseJson.difficulty).toBe(exerciseMock.difficulty)
-      expect(exerciseJson.breakDuration).toBe(exerciseMock.breakDuration)
-      expect(exerciseJson.duration).toBe(exerciseMock.duration)
       expect(mockDb.create).toHaveBeenCalledTimes(1)
       expect(mockDb.create).toHaveBeenCalledWith({
         _id: exerciseMock.id,
@@ -68,9 +62,7 @@ describe('Exercise controller', () => {
         type: exerciseMock.type,
         picture: exerciseMock.picture,
         difficulty: exerciseMock.difficulty,
-        mobility: exerciseMock.mobility,
-        duration: exerciseMock.duration,
-        breakDuration: exerciseMock.breakDuration
+        mobility: exerciseMock.mobility
       })
       done()
     })

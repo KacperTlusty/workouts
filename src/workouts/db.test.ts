@@ -1,4 +1,5 @@
 import { dbClient } from './db'
+import { WorkoutDb } from './types'
 
 describe('Db connector', () => {
   let client: WorkoutDb
@@ -19,7 +20,7 @@ describe('Db connector', () => {
           }),
           deleteOne: async (args): Promise<any> => Promise.resolve({
             result: {
-              ok: args.id === 'fake id' ? 1 : 0,
+              ok: args.id === 'fake id' ? 1 : 0
             },
             deletedCount: args.id === 'fake id' ? 1 : 0
           })

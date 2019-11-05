@@ -14,8 +14,6 @@ export default function makeModel ({
   return function ({
     name,
     type,
-    duration = 0,
-    breakDuration = 0,
     picture = '',
     mobility = '',
     difficulty = '',
@@ -34,14 +32,6 @@ export default function makeModel ({
       throw new Error('type is missing')
     }
 
-    if (duration < 0) {
-      throw new Error('duration cannot be negative number')
-    }
-
-    if (breakDuration < 0) {
-      throw new Error('breakDuration cannot be negative number')
-    }
-
     if (!validateId(id)) {
       throw new Error('invalid id')
     }
@@ -55,8 +45,6 @@ export default function makeModel ({
         id,
         name,
         type,
-        duration,
-        breakDuration,
         picture,
         mobility,
         difficulty
@@ -71,8 +59,6 @@ export default function makeModel ({
       hash,
       name,
       type,
-      duration,
-      breakDuration,
       picture,
       mobility,
       difficulty,

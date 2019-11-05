@@ -57,8 +57,6 @@ describe('exercise handlers test', () => {
         body: {
           name: 'fake name',
           type: 'fake type',
-          duration: 2000,
-          breakDuration: 1000,
           difficulty: 'fake difficulty',
           fake: 'prop',
           mobility: 'fake mobility',
@@ -75,8 +73,6 @@ describe('exercise handlers test', () => {
       expect(createMock).toHaveBeenCalledWith({
         name: 'fake name',
         type: 'fake type',
-        duration: 2000,
-        breakDuration: 1000,
         difficulty: 'fake difficulty',
         mobility: 'fake mobility',
         picture: 'fake picture'

@@ -10,8 +10,6 @@ function dbToJson (exercise: ExerciseDbEntity): ExerciseJson {
     id: exercise._id,
     name: exercise.name,
     type: exercise.type,
-    duration: exercise.duration,
-    breakDuration: exercise.breakDuration,
     mobility: exercise.mobility,
     picture: exercise.picture,
     difficulty: exercise.difficulty
@@ -34,8 +32,6 @@ export function makeCreateExercise ({
       _id: exercise.id,
       name: exercise.name,
       type: exercise.type,
-      duration: exercise.duration,
-      breakDuration: exercise.breakDuration,
       mobility: exercise.mobility,
       picture: exercise.picture,
       difficulty: exercise.difficulty,

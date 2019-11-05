@@ -24,8 +24,6 @@ export function makeExerciseHandlers ({
       const exercise = await create({
         name: req.body.name,
         type: req.body.type,
-        duration: req.body.duration,
-        breakDuration: req.body.breakDuration,
         difficulty: req.body.difficulty,
         mobility: req.body.mobility,
         picture: req.body.picture
