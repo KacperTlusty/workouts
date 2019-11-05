@@ -1,16 +1,9 @@
-
-export interface CreateMakeWorkoutArgs {
-  makeId: () => string,
-  validateId: (string) => boolean
-}
-
-export interface Workout {
-  id: string;
-  getExercises: () => Exercise[];
-  addExercise: (Exercise) => void;
-  name: string;
-  userId?: string;
-} 
+import {
+  CreateMakeWorkoutArgs,
+  MakeWorkoutArgs,
+  Workout
+} from './types'
+import { Exercise } from '../exercises/types'
 
 export default function createMakeWorkout ({
   makeId,
@@ -33,13 +26,6 @@ export default function createMakeWorkout ({
       throw new Error('Given id is invalid.')
     }
 
-    return Object.freeze<Workout>({
-      name,
-      id,
-      addExercise,
-      getExercises
-    })
-
     function addExercise (exercise: Exercise): void {
       if (!exercise) {
         throw new Error('Cannot add null')
@@ -50,5 +36,11 @@ export default function createMakeWorkout ({
     function getExercises (): Exercise[] {
       return exercises
     }
+    return Object.freeze<Workout>({
+      name,
+      id,
+      addExercise,
+      getExercises
+    })
   }
 }

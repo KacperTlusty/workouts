@@ -1,36 +1,13 @@
-import { MongoClient, Db } from 'mongodb'
-import env from 'dotenv'
+import { MongoClient, Collection } from 'mongodb'
+import { WorkoutDb, WorkoutDbEntity } from './types'
 
-env.config()
-
-const {
-  DB_USERNAME,
-  DB_PASSWORD,
-  DB_HOST,
-  DB_NAME
-} = process.env
-
-const uri = `mongodb+srv://${DB_USERNAME}:${encodeURIComponent(DB_PASSWORD)}@${DB_HOST}/test?retryWrites=true&w=majority`
-
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-
-let db: Db
-
-client.connect((error) => {
-  if (process.env.NODE_ENV !== 'test' && error) {
-    console.error(error)
-  }
-  db = client.db(DB_NAME)
-})
-
-export function dbClient (): WorkoutDb {
+export function dbClient (client: MongoClient): WorkoutDb {
   if (!client.isConnected()) {
     client.connect()
   }
-  const getCollection = () => {
+  const db = client.db('workouts')
+
+  const getCollection: () => Collection<WorkoutDbEntity> = () => {
     return db.collection('workout')
   }
 
@@ -66,6 +43,6 @@ export function dbClient (): WorkoutDb {
     create,
     findById,
     findAll,
-    deleteById,
+    deleteById
   }
 }

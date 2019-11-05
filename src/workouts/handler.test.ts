@@ -2,9 +2,9 @@ import {
   makeGetById,
   makeGetAll,
   makeCreate,
-  WorkoutController,
   makeDeleteById
 } from './handler'
+import { WorkoutController } from './handler.d'
 import { Request, Response } from 'express'
 
 const controllerMock = (args: any): WorkoutController => Object.assign({

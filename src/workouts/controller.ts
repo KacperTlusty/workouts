@@ -1,3 +1,11 @@
+import {
+  WorkoutController,
+  WorkoutJson,
+  Workout,
+  MakeWorkoutArgs,
+  WorkoutDb
+} from './types'
+
 function toJson (entity: Workout): WorkoutJson {
   return {
     id: entity.id,
@@ -30,7 +38,7 @@ export function makeCreate (
       exercises: workout.getExercises().map(exercise => exercise.id),
       name: workout.name
     })
-    
+
     return toJson(makeWorkout({ ...created, id: created._id }))
   }
 }
@@ -69,17 +77,29 @@ export function makeFindById (
       exercises: row.exercises,
       userId: row.userId
     })
-    
+
     return Promise.resolve(toJson(workout))
   }
 }
 
 export function makeDeleteById (
+  db: WorkoutDb
+  // makeWorkout: (MakeWorkoutArgs) => Workout
+): (string) => Promise<string> {
+  return async function deleteById (id: string): Promise<string> {
+    return db.deleteById(id)
+  }
+}
+
+export function makeController (
   db: WorkoutDb,
   makeWorkout: (MakeWorkoutArgs) => Workout
-): (string) => Promise<string> {
-  return async function deleteById(id: string): Promise<string> {
-    return db.deleteById(id)
+): WorkoutController {
+  return {
+    create: makeCreate(db, makeWorkout),
+    getAll: makeFindAll(db, makeWorkout),
+    getById: makeFindById(db, makeWorkout),
+    deleteById: makeDeleteById(db)
   }
 }
 

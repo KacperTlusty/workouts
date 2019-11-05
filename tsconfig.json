@@ -8,9 +8,10 @@
     "esModuleInterop": true,
     "typeRoots": [
       "node_modules/@types",
-      "src/global.d.ts",
+      "src/**.d.ts"
     ],
-    "allowUmdGlobalAccess": true
+    "allowUmdGlobalAccess": true,
+    "preserveSymlinks": true
   },
   "exclude": [
     "node_modules"

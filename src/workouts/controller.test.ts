@@ -1,7 +1,8 @@
 import { makeCreate, makeFindAll, makeFindById, makeDeleteById } from './controller'
 import { makeFakeWorkoutArgs } from '../../tests/workout'
 import { fakeExercise } from '../../tests/exercise'
-import { Workout } from './model'
+import { WorkoutDb, MakeWorkoutArgs, Workout } from './types'
+import { Exercise } from '../exercises/types'
 
 describe('Workout controller test suite', () => {
   let mockDb: WorkoutDb
@@ -14,7 +15,7 @@ describe('Workout controller test suite', () => {
       deleteById: jest.fn()
     }
     mockWorkoutFactory = jest.fn((workoutArgs: MakeWorkoutArgs): Workout => {
-      const exercises = workoutArgs.exercises.map(id => (fakeExercise({ id })))
+      const exercises: any = workoutArgs.exercises.map(id => (fakeExercise({ id })))
       return {
         id: workoutArgs.id,
         name: workoutArgs.name,
@@ -66,7 +67,10 @@ describe('Workout controller test suite', () => {
     })
   })
   describe('create action', () => {
-    const workoutArgs = makeFakeWorkoutArgs()
+    let workoutArgs: MakeWorkoutArgs
+    beforeEach(() => {
+      workoutArgs = makeFakeWorkoutArgs()
+    })
     test('should call db create', async (done) => {
       mockDb.create = jest.fn<any, any>((arg) => arg)
       const createWorkout = makeCreate(
@@ -113,7 +117,7 @@ describe('Workout controller test suite', () => {
       })
       done()
     })
-  }),
+  })
   describe('getById', () => {
     test('should return found object and parse it', async (done) => {
       mockDb.findById = jest.fn(() => Promise.resolve({
@@ -150,7 +154,7 @@ describe('Workout controller test suite', () => {
   describe('deleteById', () => {
     test('should use mapper', async (done) => {
       mockDb.deleteById = jest.fn(async () => Promise.resolve('Object removed.'))
-      const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
+      const deleteById = makeDeleteById(mockDb)
       expect(await deleteById('fake by id')).toEqual('Object removed.')
       expect(mockDb.deleteById).toHaveBeenCalledWith('fake by id')
       expect(mockDb.deleteById).toHaveBeenCalledTimes(1)

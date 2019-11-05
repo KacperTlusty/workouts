@@ -2,10 +2,11 @@ module.exports = {
   env: {
     es6: true,
     node: true,
-    "jest/globals": true
+    jest: true
   },
   extends: [
     'standard',
+    'eslint:recommended',
     "plugin:@typescript-eslint/recommended"
   ],
   globals: {
@@ -23,6 +24,12 @@ module.exports = {
     'jest'
   ],
   rules: {
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', {
+      'vars': 'all',
+      'args': 'after-used',
+      'ignoreRestSiblings': false
+    }]
   },
   overrides: [{
     files: [

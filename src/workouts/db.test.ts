@@ -1,22 +1,23 @@
 import { dbClient } from './db'
 
-jest.mock('mongodb', () => {
-  return {
-    MongoClient: jest.fn(() => ({
+describe('Db connector', () => {
+  let client: WorkoutDb
+  beforeEach(() => {
+    const mockClient: any = {
       connect: jest.fn((cb) => {
         cb(null)
       }),
       isConnected: () => true,
       db: () => ({
-        collection: () => ({
-          insertOne: (async (val) => Promise.resolve({
+        collection: (): any => ({
+          insertOne: async (val): Promise<any> => Promise.resolve({
             insertedCount: val ? 1 : 0
-          })),
-          findOne: (args) => Promise.resolve(args),
-          find: () => Promise.resolve({
+          }),
+          findOne: async (args): Promise<any> => Promise.resolve(args),
+          find: async (): Promise<any> => Promise.resolve({
             toArray: () => ['fake 1', 'fake 2']
           }),
-          deleteOne: (args) => Promise.resolve({
+          deleteOne: async (args): Promise<any> => Promise.resolve({
             result: {
               ok: args.id === 'fake id' ? 1 : 0,
             },
@@ -24,14 +25,8 @@ jest.mock('mongodb', () => {
           })
         })
       })
-    }))
-  }
-})
-
-describe('Db connector', () => {
-  let client: WorkoutDb
-  beforeEach(() => {
-    client = dbClient()
+    }
+    client = dbClient(mockClient)
   })
   describe('create method', () => {
     test('should return inserted object', async (done) => {

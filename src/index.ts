@@ -1,20 +1,41 @@
 import Express from 'express'
-import evn from 'dotenv'
 import bodyparser from 'body-parser'
 import cors from 'cors'
-import WorkoutRouter from './routes'
+import { makeExerciseRouter, makeWorkoutRouter } from './routes'
+import env from 'dotenv'
+import { MongoClient } from 'mongodb'
 
-evn.config()
+env.config()
 
-const app = Express()
-const port = process.env.PORT
+const {
+  DB_USERNAME,
+  DB_PASSWORD,
+  DB_HOST
+} = process.env
 
-app.use(cors())
-app.use(bodyparser.json())
+const uri = `mongodb+srv://${DB_USERNAME}:${encodeURIComponent(DB_PASSWORD)}@${DB_HOST}/test?retryWrites=true&w=majority`
 
-app.get('/', (req, res) => res.send('dupa'))
-app.use('/api/workout', WorkoutRouter)
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
-app.listen(port, () => {
-  console.log(`App is listening on port ${port}`)
+client.connect((error) => {
+  if (process.env.NODE_ENV !== 'test' && error) {
+    console.error(error)
+    return
+  }
+  const app = Express()
+  const port = process.env.PORT
+
+  app.use(cors())
+  app.use(bodyparser.json())
+
+  app.get('/', (req, res) => res.send('dupa'))
+  app.use('/api/exercise', makeExerciseRouter(client))
+  app.use('/api/workout', makeWorkoutRouter(client))
+
+  app.listen(port, () => {
+    console.log(`App is listening on port ${port}`)
+  })
 })

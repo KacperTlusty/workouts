@@ -1,8 +1,9 @@
 import { random, internet } from 'faker'
+import cuid from 'cuid'
 
-export function fakeExercise (args: any = {}): Exercise {
-  return Object.assign({
-    id: random.uuid(),
+export function fakeExercise (args: any = {}): ExerciseJson {
+  return Object.assign({}, {
+    id: cuid(),
     name: random.word(),
     type: random.word(),
     duration: random.number({ min: 1, max: 1000 * 60 * 60 * 23 }),

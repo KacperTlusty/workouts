@@ -1,11 +1,5 @@
 import { Request, Response } from 'express'
-
-export interface WorkoutController {
-  getAll: () => Promise<WorkoutJson[]>;
-  create: (MakeWorkoutArgs) => Promise<WorkoutJson>;
-  getById: (id: string) => Promise<WorkoutJson>;
-  deleteById: (id: string) => Promise<string>
-}
+import { WorkoutController, WorkoutHandler } from './types'
 
 export function makeGetAll ({
   getAll
@@ -38,8 +32,8 @@ export function makeCreate ({
 
 export function makeGetById ({
   getById
-}: WorkoutController) : (Request, Response) => Promise<Response> {
-  return async function getWorkoutById(req: Request, res: Response): Promise<Response> {
+}: WorkoutController): (Request, Response) => Promise<Response> {
+  return async function getWorkoutById (req: Request, res: Response): Promise<Response> {
     try {
       const result = await getById(req.params.workoutId)
       return res.status(200).json(result)
@@ -55,6 +49,15 @@ export function makeDeleteById ({
   return async function deleteWorkoutById (req: Request, res: Response): Promise<Response> {
     const result = await deleteById(req.params.workoutId)
     return res.status(200).json(result)
+  }
+}
+
+export function makeHandlers (controller: WorkoutController): WorkoutHandler {
+  return {
+    create: makeCreate(controller),
+    deleteById: makeDeleteById(controller),
+    getAll: makeGetAll(controller),
+    getById: makeGetById(controller)
   }
 }
 
