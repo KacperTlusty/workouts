@@ -6,6 +6,7 @@ import {
 } from './handler'
 import { WorkoutController, WorkoutJson } from './types'
 import { Request, Response } from 'express'
+import { makeFakeWorkoutExercise } from '../../tests/workout'
 
 const controllerMock = (args: any): WorkoutController => Object.assign({
   create: jest.fn(),
@@ -71,19 +72,26 @@ describe('Workout request handlers', () => {
       mockRequest = {
         body: {
           name: 'fake name',
-          userId: 'fake user id'
+          userId: 'fake user id',
+          fake: 'prop'
         }
       }
     })
     test('should create workout', async (done) => {
-      const create = makeCreate(controllerMock({
+      const fakeExercises = [
+        makeFakeWorkoutExercise(),
+        makeFakeWorkoutExercise()
+      ]
+      const controller = controllerMock({
         create: jest.fn(() => Promise.resolve({
           id: 'fake id 1',
           name: 'fake name 1',
           userId: 'fake user 1',
-          exercises: []
+          exercises: fakeExercises
         }))
-      }))
+      })
+      mockRequest.body.exercises = fakeExercises
+      const create = makeCreate(controller)
       await create(mockRequest, mockResponse)
       expect(mockResponse.status).toHaveBeenCalledWith(200)
       expect(mockResponse.status).toHaveBeenCalledTimes(1)
@@ -91,7 +99,12 @@ describe('Workout request handlers', () => {
         id: 'fake id 1',
         name: 'fake name 1',
         userId: 'fake user 1',
-        exercises: []
+        exercises: fakeExercises
+      })
+      expect(controller.create).toHaveBeenCalledWith({
+        name: 'fake name',
+        userId: 'fake user id',
+        exercises: fakeExercises
       })
       expect(mockResponse.json).toHaveBeenCalledTimes(1)
       done()

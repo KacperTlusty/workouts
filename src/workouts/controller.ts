@@ -10,7 +10,7 @@ function toJson (entity: Workout): WorkoutJson {
   return {
     id: entity.id,
     name: entity.name,
-    exercises: entity.getExercises().map(exercise => exercise.id),
+    exercises: entity.getExercises().map(exercise => exercise.exerciseId),
     userId: entity.userId
   }
 }
@@ -35,7 +35,7 @@ export function makeCreate (
     const created = await db.create({
       _id: workout.id,
       userId: workout.userId,
-      exercises: workout.getExercises().map(exercise => exercise.id),
+      exercises: workout.getExercises().map(exercise => exercise.exerciseId),
       name: workout.name
     })
 

@@ -1,5 +1,14 @@
 import { Request, Response } from 'express'
-import { Exercise } from '../exercises/types'
+
+export interface WorkoutExercise {
+  exerciseId: string;
+  name: string;
+  order: number;
+  duration?: number;
+  breakDuration?: number;
+  repetition?: number;
+  weights?: number;
+}
 
 export interface WorkoutHandler {
   create: (req: Request, res: Response) => Promise<Response>;
@@ -10,15 +19,15 @@ export interface WorkoutHandler {
 
 export interface WorkoutController {
   getAll: () => Promise<WorkoutJson[]>;
-  create: (MakeWorkoutArgs) => Promise<WorkoutJson>;
+  create: (args: MakeWorkoutArgs) => Promise<WorkoutJson>;
   getById: (id: string) => Promise<WorkoutJson>;
   deleteById: (id: string) => Promise<string>;
 }
 
 export interface Workout {
   id: string;
-  getExercises: () => Exercise[];
-  addExercise: (Exercise) => void;
+  getExercises: () => WorkoutExercise[];
+  addExercise: (exercise: WorkoutExercise) => void;
   name: string;
   userId?: string;
 }
@@ -42,7 +51,7 @@ export interface User {
 export interface MakeWorkoutArgs {
   id?: string;
   name: string;
-  exercises?: Exercise[];
+  exercises?: WorkoutExercise[];
   userId?: string;
 }
 
@@ -53,13 +62,13 @@ export interface WorkoutJson {
   userId?: string;
 }
 export interface WorkoutDb {
-  create: (WorkoutDbEntity) => Promise<WorkoutDbEntity>;
-  findById: (string) => Promise<WorkoutDbEntity>;
+  create: (entity: WorkoutDbEntity) => Promise<WorkoutDbEntity>;
+  findById: (id: string) => Promise<WorkoutDbEntity>;
   findAll: () => Promise<WorkoutDbEntity[]>;
-  deleteById: (string) => Promise<string>;
+  deleteById: (id: string) => Promise<string>;
 }
 
 export interface CreateMakeWorkoutArgs {
   makeId: () => string;
-  validateId: (string) => boolean;
+  validateId: (id: string) => boolean;
 }

@@ -29,6 +29,9 @@ module.exports = {
       'vars': 'all',
       'args': 'after-used',
       'ignoreRestSiblings': false
+    }],
+    '@typescript-eslint/no-use-before-define': ['error', {
+      functions: false
     }]
   },
   overrides: [{

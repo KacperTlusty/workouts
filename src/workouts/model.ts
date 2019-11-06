@@ -1,9 +1,9 @@
 import {
   CreateMakeWorkoutArgs,
   MakeWorkoutArgs,
+  WorkoutExercise,
   Workout
 } from './types'
-import { Exercise } from '../exercises/types'
 
 export default function createMakeWorkout ({
   makeId,
@@ -26,21 +26,41 @@ export default function createMakeWorkout ({
       throw new Error('Given id is invalid.')
     }
 
-    function addExercise (exercise: Exercise): void {
-      if (!exercise) {
-        throw new Error('Cannot add null')
-      }
-      exercises.push(exercise)
-    }
+    exercises.forEach(exercise => {
+      validateExercise(exercise)
+    })
 
-    function getExercises (): Exercise[] {
-      return exercises
-    }
     return Object.freeze<Workout>({
       name,
       id,
       addExercise,
       getExercises
     })
+
+    function addExercise (exercise: WorkoutExercise): void {
+      validateExercise(exercise)
+      exercises.push(exercise)
+    }
+
+    function getExercises (): WorkoutExercise[] {
+      return exercises
+    }
+
+    function validateExercise (exercise: WorkoutExercise): boolean {
+      if (!exercise) {
+        throw new Error('Cannot add null')
+      }
+      if (!validateId(exercise.exerciseId)) {
+        throw new Error(`${exercise.exerciseId} is not valid exerciseId`)
+      }
+      if (exercise.duration < 0) {
+        throw new Error('exercise duration cannot be negative integer')
+      }
+      if (exercise.breakDuration < 0) {
+        throw new Error('exercise breakDuration cannot be negative integer')
+      }
+
+      return true
+    }
   }
 }

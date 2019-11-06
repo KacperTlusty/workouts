@@ -1,8 +1,6 @@
 import { makeCreate, makeFindAll, makeFindById, makeDeleteById } from './controller'
-import { makeFakeWorkoutArgs } from '../../tests/workout'
-import { fakeExercise } from '../../tests/exercise'
-import { WorkoutDb, MakeWorkoutArgs, Workout } from './types'
-import { Exercise } from '../exercises/types'
+import { makeFakeWorkoutArgs, makeFakeWorkoutExercise } from '../../tests/workout'
+import { WorkoutDb, MakeWorkoutArgs, Workout, WorkoutExercise } from './types'
 
 describe('Workout controller test suite', () => {
   let mockDb: WorkoutDb
@@ -15,11 +13,11 @@ describe('Workout controller test suite', () => {
       deleteById: jest.fn()
     }
     mockWorkoutFactory = jest.fn((workoutArgs: MakeWorkoutArgs): Workout => {
-      const exercises: any = workoutArgs.exercises.map(id => (fakeExercise({ id })))
+      const exercises: any = workoutArgs.exercises.map(id => (makeFakeWorkoutExercise({ exerciseId: id })))
       return {
         id: workoutArgs.id,
         name: workoutArgs.name,
-        getExercises: (): Exercise[] => exercises,
+        getExercises: (): WorkoutExercise[] => exercises,
         userId: workoutArgs.userId,
         addExercise: (): void => {}
       }
