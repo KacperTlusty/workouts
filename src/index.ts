@@ -34,6 +34,7 @@ client.connect((error) => {
   app.get('/', (req, res) => res.send('dupa'))
   app.use('/api/exercise', makeExerciseRouter(client))
   app.use('/api/workout', makeWorkoutRouter(client))
+  app.use('/api/users', makeWorkoutRouter(client))
 
   app.listen(port, () => {
     console.log(`App is listening on port ${port}`)

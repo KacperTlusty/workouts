@@ -36,7 +36,8 @@ module.exports = {
   },
   overrides: [{
     files: [
-      'src/**/*.test.ts'
+      'src/**/*.test.ts',
+      'tests/**/*.ts'
     ],
     rules: {
       '@typescript-eslint/no-explicit-any': 0

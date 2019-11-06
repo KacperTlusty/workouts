@@ -31,7 +31,7 @@ describe('Db connector', () => {
   })
   describe('create method', () => {
     test('should return inserted object', async (done) => {
-      const fakeWorkout = {
+      const fakeWorkout: any = {
         fake: 'property'
       }
       const result = await client.create(fakeWorkout)

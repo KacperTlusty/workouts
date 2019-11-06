@@ -39,15 +39,6 @@ export interface WorkoutDbEntity {
   userId?: string;
 }
 
-export interface User {
-  email: string;
-  age?: number;
-  firstName?: string;
-  lastName?: string;
-  password?: string;
-  workouts?: Workout[];
-}
-
 export interface MakeWorkoutArgs {
   id?: string;
   name: string;
