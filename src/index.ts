@@ -1,9 +1,13 @@
 import Express from 'express'
 import bodyparser from 'body-parser'
 import cors from 'cors'
-import { makeExerciseRouter, makeWorkoutRouter } from './routes'
 import env from 'dotenv'
 import { MongoClient } from 'mongodb'
+import passport from 'passport'
+import { makeExerciseRouter, makeWorkoutRouter } from './routes'
+import { makeAuthStrategies } from './authentication'
+import { createUser } from './users'
+import { makeUsersRouter } from './routes/users'
 
 env.config()
 
@@ -27,14 +31,23 @@ client.connect((error) => {
   }
   const app = Express()
   const port = process.env.PORT
+  const authStrategies = makeAuthStrategies(client.db('workouts'), createUser)
+
+  passport.use(authStrategies.jwt)
+  passport.use(authStrategies.local)
 
   app.use(cors())
   app.use(bodyparser.json())
 
   app.get('/', (req, res) => res.send('dupa'))
-  app.use('/api/exercise', makeExerciseRouter(client))
-  app.use('/api/workout', makeWorkoutRouter(client))
-  app.use('/api/users', makeWorkoutRouter(client))
+  app.get('/api/login', passport.authenticate('local'))
+  app.use('/api/exercise',
+    passport.authenticate('jwt'),
+    makeExerciseRouter(client))
+  app.use('/api/workout',
+    passport.authenticate('jwt'),
+    makeWorkoutRouter(client))
+  app.use('/api/users', makeUsersRouter(client, passport))
 
   app.listen(port, () => {
     console.log(`App is listening on port ${port}`)

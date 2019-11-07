@@ -7,13 +7,13 @@ import { makeUserDbConnector } from './db'
 import { makeUserController } from './controller'
 import { makeUserHandler } from './handler'
 
-export function makeUserHandlers (client: MongoClient): UserHandler {
-  const createUser = makeCreateUser({
-    createId: cuid,
-    validateId: isCuid,
-    hashPassword: (password) => createHash('sha256').update(password).digest('hex')
-  })
+export const createUser = makeCreateUser({
+  createId: cuid,
+  validateId: isCuid,
+  hashPassword: (password) => createHash('sha256').update(password).digest('hex')
+})
 
+export function makeUserHandlers (client: MongoClient): UserHandler {
   const userDb = makeUserDbConnector(client.db('workouts'))
 
   const controller: UserController = makeUserController(userDb, createUser)

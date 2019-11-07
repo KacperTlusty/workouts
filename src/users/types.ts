@@ -57,3 +57,8 @@ export interface UserHandler {
   createUser: (req: Request, res: Response) => Promise<Response>;
   getByEmail: (req: Request, res: Response) => Promise<Response>;
 }
+
+export interface UserAuth {
+  id: string;
+  email: string;
+}
