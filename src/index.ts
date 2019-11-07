@@ -40,7 +40,7 @@ client.connect((error) => {
   app.use(bodyparser.json())
 
   app.get('/', (req, res) => res.send('dupa'))
-  app.get('/api/login', passport.authenticate('local'))
+  app.post('/api/login', passport.authenticate('local'))
   app.use('/api/exercise',
     passport.authenticate('jwt'),
     makeExerciseRouter(client))
