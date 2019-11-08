@@ -74,6 +74,11 @@ export function makeDeleteById ({
 }: MakeCreateExercise): (string) => Promise<ExerciseJson> {
   return async function deleteById (id: string): Promise<ExerciseJson> {
     const foundExercise = await db.findById(id)
+
+    if (!foundExercise) {
+      return null
+    }
+
     const exercise = makeExercise({
       ...foundExercise, id: foundExercise._id
     })

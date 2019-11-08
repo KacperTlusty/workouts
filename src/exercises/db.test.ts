@@ -75,7 +75,7 @@ describe('Exercise db connector', () => {
       mockDb = {
         collection: (): any => ({
           findOne: (query: any): ExerciseDbEntity => {
-            expect(query).toEqual({ id: 'fake id' })
+            expect(query).toEqual({ _id: 'fake id' })
             return exerciseFromDb
           }
         })
@@ -91,7 +91,7 @@ describe('Exercise db connector', () => {
       mockDb = {
         collection: (): any => ({
           deleteOne: (query: any): any => {
-            expect(query).toEqual({ id: 'fake id delete' })
+            expect(query).toEqual({ _id: 'fake id delete' })
             return { deletedCount: 1 }
           }
         })
@@ -105,7 +105,7 @@ describe('Exercise db connector', () => {
       mockDb = {
         collection: (): any => ({
           deleteOne: (query: any): any => {
-            expect(query).toEqual({ id: 'fake id delete' })
+            expect(query).toEqual({ _id: 'fake id delete' })
             return { deletedCount: 0 }
           }
         })

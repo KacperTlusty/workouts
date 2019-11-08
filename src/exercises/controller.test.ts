@@ -184,5 +184,18 @@ describe('Exercise controller', () => {
       expect(result).toBeNull()
       done()
     })
+    test('should return null if object was not found', async (done) => {
+      mockDb.findById = jest.fn(async () => null)
+      const deleteById = makeDeleteById({
+        db: mockDb,
+        makeExercise: makeExerciseMock
+      })
+
+      const result = await deleteById('fake id')
+
+      expect(mockDb.findById).toHaveBeenCalledWith('fake id')
+      expect(result).toBeNull()
+      done()
+    })
   })
 })

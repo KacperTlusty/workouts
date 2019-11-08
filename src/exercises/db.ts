@@ -22,11 +22,11 @@ export function makeDbConnector (db: Db): ExerciseDb {
   }
 
   async function findById (id: string): Promise<ExerciseDbEntity> {
-    return collection.findOne<ExerciseDbEntity>({ id })
+    return collection.findOne<ExerciseDbEntity>({ _id: id })
   }
 
   async function deleteById (id: string): Promise<boolean> {
-    const result = await collection.deleteOne({ id })
+    const result = await collection.deleteOne({ _id: id })
     return result.deletedCount > 0
   }
 
