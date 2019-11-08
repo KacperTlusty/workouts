@@ -3,12 +3,13 @@ import cuid from 'cuid'
 import { MakeWorkoutArgs, WorkoutExercise } from '../src/workouts/types'
 
 export function makeFakeWorkoutArgs (args: any = {}): MakeWorkoutArgs {
-  return Object.assign({
-    name: name.firstName(),
-    exercises: [],
-    id: cuid(),
-    userId: cuid()
-  }, args)
+  return Object.assign({},
+    {
+      name: name.firstName(),
+      exercises: [],
+      id: cuid(),
+      userId: cuid()
+    }, args)
 }
 
 export function makeFakeWorkoutExercise (args: any = {}): WorkoutExercise {

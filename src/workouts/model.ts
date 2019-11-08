@@ -12,7 +12,8 @@ export default function createMakeWorkout ({
   return function makeWorkout ({
     name,
     id,
-    exercises = []
+    exercises = [],
+    userId = ''
   }: MakeWorkoutArgs): Workout {
     if (!name) {
       throw new Error('name cannot be empty')
@@ -24,6 +25,10 @@ export default function createMakeWorkout ({
 
     if (!validateId(id)) {
       throw new Error('Given id is invalid.')
+    }
+
+    if (userId && !validateId(userId)) {
+      throw new Error('userId is not valid cuid')
     }
 
     exercises.forEach(exercise => {

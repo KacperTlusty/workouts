@@ -33,6 +33,10 @@ describe('Workout model', () => {
       expect(() => workoutFactory(workoutArgs))
         .toThrowError('invalid id is not valid exerciseId')
     })
+    test('should yield error when user id is not valid cuid', () => {
+      const workoutArgs = makeFakeWorkoutArgs({ userId: 'not valid user Id' })
+      expect(() => workoutFactory(workoutArgs)).toThrowError('userId is not valid cuid')
+    })
   })
   describe('exercise', () => {
     let fakeWorkoutArgs: MakeWorkoutArgs
