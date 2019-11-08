@@ -5,10 +5,9 @@ import env from 'dotenv'
 import { MongoClient } from 'mongodb'
 import passport from 'passport'
 import { makeExerciseRouter, makeWorkoutRouter } from './routes'
-import { makeAuthStrategies } from './authentication'
+import { makeAuthStrategies, authHandler } from './authentication'
 import { createUser } from './users'
 import { makeUsersRouter } from './routes/users'
-import { makeAuthHandlers } from './authentication/handler'
 
 env.config()
 
@@ -41,7 +40,9 @@ client.connect((error) => {
   app.use(bodyparser.json())
 
   app.get('/', (req, res) => res.send('dupa'))
-  app.post('/api/login', passport.authenticate('local', { session: false }), makeAuthHandlers(createJ))
+
+  app.post('/api/login', passport.authenticate('local', { session: false }), authHandler.returnJwt)
+
   app.use('/api/exercise',
     passport.authenticate('jwt', { session: false }),
     makeExerciseRouter(client))
