@@ -32,6 +32,9 @@ export function makeCreateUser ({
     if (!validateEmail(email)) {
       throw new Error(`'${email}' is not valid email`)
     }
+    if (!age) {
+      throw new Error('User must have age property')
+    }
     if (age < MIN_USER_AGE) {
       throw new Error('User must be atleast 18 years old')
     }

@@ -25,8 +25,10 @@ describe('User model', () => {
     test('should verify age', () => {
       const tooYoung = fakeCreateUserArgs({ age: 15 })
       const tooOld = fakeCreateUserArgs({ age: 101 })
+      const undefinedAge = fakeCreateUserArgs({ age: undefined })
       expect(() => createUser(tooYoung)).toThrowError('User must be atleast 18 years old')
       expect(() => createUser(tooOld)).toThrowError('User is too old to lift :)')
+      expect(() => createUser(undefinedAge)).toThrowError('User must have age property')
     })
   })
   describe('should create neccessary properties', () => {
