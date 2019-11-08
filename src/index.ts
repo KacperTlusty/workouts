@@ -8,6 +8,7 @@ import { makeExerciseRouter, makeWorkoutRouter } from './routes'
 import { makeAuthStrategies } from './authentication'
 import { createUser } from './users'
 import { makeUsersRouter } from './routes/users'
+import { makeAuthHandlers } from './authentication/handler'
 
 env.config()
 
@@ -40,12 +41,12 @@ client.connect((error) => {
   app.use(bodyparser.json())
 
   app.get('/', (req, res) => res.send('dupa'))
-  app.post('/api/login', passport.authenticate('local'))
+  app.post('/api/login', passport.authenticate('local', { session: false }), makeAuthHandlers(createJ))
   app.use('/api/exercise',
-    passport.authenticate('jwt'),
+    passport.authenticate('jwt', { session: false }),
     makeExerciseRouter(client))
   app.use('/api/workout',
-    passport.authenticate('jwt'),
+    passport.authenticate('jwt', { session: false }),
     makeWorkoutRouter(client))
   app.use('/api/users', makeUsersRouter(client, passport))
 

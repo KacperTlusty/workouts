@@ -43,4 +43,54 @@ describe('auth controller test suite', () => {
       done()
     })
   })
+  describe('login', () => {
+    test('should return null if user is not found', async (done) => {
+      const db: any = {
+        findByEmail: jest.fn(() => null)
+      }
+      const controller = makeAuthController(db, null)
+
+      const result = await controller.login('fake email', 'fake password')
+
+      expect(result).toBeNull()
+      expect(db.findByEmail).toHaveBeenCalledWith('fake email')
+      expect(db.findByEmail).toHaveBeenCalledTimes(1)
+      done()
+    })
+    test('should return user id and email when logged', async (done) => {
+      const db: any = {
+        findByEmail: jest.fn(() => ({
+          _id: 'fake id',
+          password: 'fake password',
+          age: 25
+        }))
+      }
+      const makeUser = jest.fn((arg: any): any => arg)
+      const controller = makeAuthController(db, makeUser)
+
+      const result = await controller.login('fake email', 'fake password')
+
+      expect(result).toEqual({
+        id: 'fake id',
+        email: 'fake email'
+      })
+      done()
+    })
+    test('should return null if authentication fails', async (done) => {
+      const db: any = {
+        findByEmail: jest.fn(() => ({
+          _id: 'fake id',
+          password: 'password',
+          age: 25
+        }))
+      }
+      const makeUser = jest.fn((arg: any): any => arg)
+      const controller = makeAuthController(db, makeUser)
+
+      const result = await controller.login('fake email', 'fake password')
+
+      expect(result).toBeNull()
+      done()
+    })
+  })
 })

@@ -1,11 +1,10 @@
-import { Strategy, VerifiedCallback, ExtractJwt, VerifyCallbackWithRequest } from 'passport-jwt'
-import { Request } from 'express'
+import { Strategy, VerifiedCallback, ExtractJwt, VerifyCallback } from 'passport-jwt'
 import { JwtAuthController, JwtPayload } from '../types'
 
 export function makeJwtStrategy (
   controller: JwtAuthController
 ): Strategy {
-  const verifyFunction: VerifyCallbackWithRequest = async (req: Request, payload: JwtPayload, done: VerifiedCallback): Promise<void> => {
+  const verifyFunction: VerifyCallback = async (payload: JwtPayload, done: VerifiedCallback): Promise<void> => {
     try {
       const user = await controller.findById(payload.sub)
       if (user) {
@@ -18,6 +17,7 @@ export function makeJwtStrategy (
   }
 
   return new Strategy({
+    passReqToCallback: false,
     secretOrKey: process.env.JWT_SECRET_KEY,
     jsonWebTokenOptions: {
       ignoreExpiration: false

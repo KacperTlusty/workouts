@@ -1,27 +1,26 @@
-import { Strategy, VerifyFunctionWithRequest, IStrategyOptionsWithRequest } from 'passport-local'
-import { Request } from 'express'
+import { Strategy, VerifyFunction, IStrategyOptions } from 'passport-local'
 import { LocalAuthController } from '../types'
 
 export function makeLocalStrategy (
   authController: LocalAuthController
 ): Strategy {
-  const verify: VerifyFunctionWithRequest = async (req: Request, email: string, password: string, done): Promise<void> => {
+  const verify: VerifyFunction = async (email: string, password: string, done): Promise<void> => {
     try {
       const user = await authController.login(email, password)
       if (user) {
         done(null, user)
       }
     } catch (error) {
-      done(error, null)
+      done(error, false)
     }
     return done(null, false)
   }
 
-  const opts: IStrategyOptionsWithRequest = {
-    passReqToCallback: true,
+  const opts: IStrategyOptions = {
+    passReqToCallback: false,
     passwordField: 'password',
-    usernameField: 'user'
+    usernameField: 'email',
+    session: false
   }
-
   return new Strategy(opts, verify)
 }
