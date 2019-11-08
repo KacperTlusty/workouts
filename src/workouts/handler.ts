@@ -37,6 +37,9 @@ export function makeGetById ({
   return async function getWorkoutById (req: Request, res: Response): Promise<Response> {
     try {
       const result = await getById(req.params.workoutId)
+      if (!result) {
+        return res.status(404).json({})
+      }
       return res.status(200).json(result)
     } catch (error) {
       return res.status(500).json({ error: error.message })
@@ -48,8 +51,15 @@ export function makeDeleteById ({
   deleteById
 }: WorkoutController): (Request, Response) => Promise<Response> {
   return async function deleteWorkoutById (req: Request, res: Response): Promise<Response> {
-    const result = await deleteById(req.params.workoutId)
-    return res.status(200).json(result)
+    try {
+      const result = await deleteById(req.params.workoutId)
+      if (!result) {
+        return res.status(404).json('Not Found')
+      }
+      return res.status(200).json(result)
+    } catch (error) {
+      return res.status(400).json({ error: error.message })
+    }
   }
 }
 

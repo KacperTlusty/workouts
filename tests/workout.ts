@@ -8,7 +8,9 @@ export function makeFakeWorkoutArgs (args: any = {}): MakeWorkoutArgs {
       name: name.firstName(),
       exercises: [],
       id: cuid(),
-      userId: cuid()
+      userId: cuid(),
+      day: random.number({ min: 1, max: 90 }),
+      finished: random.boolean()
     }, args)
 }
 

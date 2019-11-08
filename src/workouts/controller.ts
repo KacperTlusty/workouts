@@ -6,15 +6,6 @@ import {
   WorkoutDb
 } from './types'
 
-function toJson (entity: Workout): WorkoutJson {
-  return {
-    id: entity.id,
-    name: entity.name,
-    exercises: entity.getExercises().map(exercise => exercise.exerciseId),
-    userId: entity.userId
-  }
-}
-
 export function makeCreate (
   db: WorkoutDb,
   makeWorkout: (MakeWorkoutArgs) => Workout
@@ -24,22 +15,26 @@ export function makeCreate (
 
     const existingWorkout = await db.findById(workout.id)
     if (existingWorkout) {
-      return toJson(makeWorkout({
+      return makeWorkout({
         id: existingWorkout._id,
         name: existingWorkout.name,
         exercises: existingWorkout.exercises,
-        userId: existingWorkout.userId
-      }))
+        userId: existingWorkout.userId,
+        day: existingWorkout.day,
+        finished: existingWorkout.finished
+      }).toJson()
     }
 
     const created = await db.create({
       _id: workout.id,
       userId: workout.userId,
-      exercises: workout.getExercises().map(exercise => exercise.exerciseId),
-      name: workout.name
+      exercises: workout.getExercises(),
+      name: workout.name,
+      day: workout.day,
+      finished: workout.finished
     })
 
-    return toJson(makeWorkout({ ...created, id: created._id }))
+    return makeWorkout({ ...created, id: created._id }).toJson()
   }
 }
 
@@ -51,12 +46,9 @@ export function makeFindAll (
     const dbWorkouts = await db.findAll()
     return dbWorkouts
       .map(row => makeWorkout({
-        id: row._id,
-        name: row.name,
-        exercises: row.exercises,
-        userId: row.userId
-      }))
-      .map(toJson)
+        ...row,
+        id: row._id
+      }).toJson())
   }
 }
 
@@ -71,22 +63,32 @@ export function makeFindById (
       return Promise.resolve(null)
     }
 
-    const workout = makeWorkout({
+    return makeWorkout({
       id: row._id,
       name: row.name,
       exercises: row.exercises,
-      userId: row.userId
-    })
-
-    return Promise.resolve(toJson(workout))
+      userId: row.userId,
+      day: row.day,
+      finished: row.finished
+    }).toJson()
   }
 }
 
 export function makeDeleteById (
-  db: WorkoutDb
-  // makeWorkout: (MakeWorkoutArgs) => Workout
+  db: WorkoutDb,
+  makeWorkout: (args: MakeWorkoutArgs) => Workout
 ): (string) => Promise<string> {
   return async function deleteById (id: string): Promise<string> {
+    const found = await db.findById(id)
+    if (!found) {
+      return null
+    }
+    if (makeWorkout({
+      ...found,
+      id: found._id
+    }).finished) {
+      throw new Error('Cannot delete finished workout')
+    }
     return db.deleteById(id)
   }
 }
@@ -99,7 +101,7 @@ export function makeController (
     create: makeCreate(db, makeWorkout),
     getAll: makeFindAll(db, makeWorkout),
     getById: makeFindById(db, makeWorkout),
-    deleteById: makeDeleteById(db)
+    deleteById: makeDeleteById(db, makeWorkout)
   }
 }
 

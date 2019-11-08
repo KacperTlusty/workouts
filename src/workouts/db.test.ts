@@ -20,9 +20,9 @@ describe('Db connector', () => {
           }),
           deleteOne: async (args): Promise<any> => Promise.resolve({
             result: {
-              ok: args.id === 'fake id' ? 1 : 0
+              ok: args._id === 'fake id' ? 1 : 0
             },
-            deletedCount: args.id === 'fake id' ? 1 : 0
+            deletedCount: args._id === 'fake id' ? 1 : 0
           })
         })
       })
@@ -47,7 +47,7 @@ describe('Db connector', () => {
   describe('findById', () => {
     test('should call find one and return its result', async (done) => {
       const result = await client.findById('fake id')
-      expect(result).toEqual({ id: 'fake id' })
+      expect(result).toEqual({ _id: 'fake id' })
       done()
     })
   })

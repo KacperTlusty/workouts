@@ -4,7 +4,7 @@ import {
   makeCreate,
   makeDeleteById
 } from './handler'
-import { WorkoutController, WorkoutJson } from './types'
+import { WorkoutController } from './types'
 import { Request, Response } from 'express'
 import { makeFakeWorkoutExercise } from '../../tests/workout'
 
@@ -24,7 +24,7 @@ describe('Workout request handlers', () => {
   })
   describe('GET /', () => {
     let getAll: (req: Request, res: Response) => Promise<Response>
-    let fakeWorkouts: WorkoutJson[]
+    let fakeWorkouts: any
     beforeEach(() => {
       fakeWorkouts = [{
         name: 'fake name',
@@ -149,6 +149,20 @@ describe('Workout request handlers', () => {
       expect(getByIdMock).toHaveBeenCalledTimes(1)
       done()
     })
+    test('should return 404 if object is not found', async (done) => {
+      const getByIdMock = jest.fn(() => null)
+      const getById = makeGetById(controllerMock({
+        getById: getByIdMock
+      }))
+
+      await getById(mockRequest, mockResponse)
+
+      expect(mockResponse.status).toHaveBeenCalledTimes(1)
+      expect(mockResponse.status).toHaveBeenCalledWith(404)
+      expect(mockResponse.json).toHaveBeenCalledWith({})
+      expect(mockResponse.json).toHaveBeenCalledTimes(1)
+      done()
+    })
     test('should handle error', async (done) => {
       const getByIdMock = jest.fn(() => {
         throw new Error('fake error')
@@ -183,6 +197,35 @@ describe('Workout request handlers', () => {
       expect(mockResponse.status).toHaveBeenCalledWith(200)
       expect(mockResponse.json).toHaveBeenCalledTimes(1)
       expect(mockResponse.json).toHaveBeenCalledWith('Object removed.')
+      done()
+    })
+    test('should return 404 when null is returned', async (done) => {
+      const removeByIdMock = jest.fn(() => null)
+      const deleteById = makeDeleteById(controllerMock({
+        deleteById: removeByIdMock
+      }))
+      await deleteById(mockRequest, mockResponse)
+
+      expect(mockResponse.status).toHaveBeenCalledTimes(1)
+      expect(mockResponse.status).toHaveBeenCalledWith(404)
+      expect(mockResponse.json).toHaveBeenCalledWith('Not Found')
+      expect(mockResponse.json).toHaveBeenCalledTimes(1)
+      done()
+    })
+    test('should handle controller error', async (done) => {
+      const removeByIdMock = jest.fn(() => {
+        throw new Error('fake error')
+      })
+      const deleteById = makeDeleteById(controllerMock({
+        deleteById: removeByIdMock
+      }))
+
+      await deleteById(mockRequest, mockResponse)
+
+      expect(mockResponse.status).toHaveBeenCalledTimes(1)
+      expect(mockResponse.json).toHaveBeenCalledWith({ error: 'fake error' })
+      expect(mockResponse.json).toHaveBeenCalledTimes(1)
+      expect(mockResponse.status).toHaveBeenCalledWith(400)
       done()
     })
   })

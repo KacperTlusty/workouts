@@ -26,17 +26,22 @@ export interface WorkoutController {
 
 export interface Workout {
   id: string;
+  name: string;
+  userId: string;
+  day: number;
+  finished: boolean;
   getExercises: () => WorkoutExercise[];
   addExercise: (exercise: WorkoutExercise) => void;
-  name: string;
-  userId?: string;
+  toJson: () => WorkoutJson;
 }
 
 export interface WorkoutDbEntity {
   _id: string;
-  exercises: string[];
+  exercises: WorkoutExercise[];
   name: string;
-  userId?: string;
+  userId: string;
+  day: number;
+  finished: boolean;
 }
 
 export interface MakeWorkoutArgs {
@@ -44,13 +49,17 @@ export interface MakeWorkoutArgs {
   name: string;
   exercises?: WorkoutExercise[];
   userId?: string;
+  day?: number;
+  finished?: boolean;
 }
 
 export interface WorkoutJson {
   id: string;
   name: string;
-  exercises: string[];
+  exercises: WorkoutExercise[];
   userId?: string;
+  day: number;
+  finished: boolean;
 }
 export interface WorkoutDb {
   create: (entity: WorkoutDbEntity) => Promise<WorkoutDbEntity>;

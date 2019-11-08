@@ -2,7 +2,8 @@ import {
   CreateMakeWorkoutArgs,
   MakeWorkoutArgs,
   WorkoutExercise,
-  Workout
+  Workout,
+  WorkoutJson
 } from './types'
 
 export default function createMakeWorkout ({
@@ -13,7 +14,9 @@ export default function createMakeWorkout ({
     name,
     id,
     exercises = [],
-    userId = ''
+    userId = '',
+    day = 0,
+    finished = false
   }: MakeWorkoutArgs): Workout {
     if (!name) {
       throw new Error('name cannot be empty')
@@ -31,6 +34,10 @@ export default function createMakeWorkout ({
       throw new Error('userId is not valid cuid')
     }
 
+    if (day < 0) {
+      throw new Error('day must be positive integer.')
+    }
+
     exercises.forEach(exercise => {
       validateExercise(exercise)
     })
@@ -39,8 +46,23 @@ export default function createMakeWorkout ({
       name,
       id,
       addExercise,
-      getExercises
+      getExercises,
+      userId,
+      finished,
+      day,
+      toJson
     })
+
+    function toJson (): WorkoutJson {
+      return Object.freeze<WorkoutJson>({
+        id,
+        name,
+        exercises: getExercises(),
+        day,
+        userId,
+        finished
+      })
+    }
 
     function addExercise (exercise: WorkoutExercise): void {
       validateExercise(exercise)

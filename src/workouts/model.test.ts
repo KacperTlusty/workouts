@@ -37,6 +37,10 @@ describe('Workout model', () => {
       const workoutArgs = makeFakeWorkoutArgs({ userId: 'not valid user Id' })
       expect(() => workoutFactory(workoutArgs)).toThrowError('userId is not valid cuid')
     })
+    test('should yield error when date is not positive integer', () => {
+      const workoutArgs = makeFakeWorkoutArgs({ day: -1 })
+      expect(() => workoutFactory(workoutArgs)).toThrowError('day must be positive integer.')
+    })
   })
   describe('exercise', () => {
     let fakeWorkoutArgs: MakeWorkoutArgs
@@ -62,6 +66,16 @@ describe('Workout model', () => {
         .toThrowError('exercise duration cannot be negative integer')
       expect(() => fakeWorkout.addExercise(makeFakeWorkoutExercise({ breakDuration: -1 })))
         .toThrowError('exercise breakDuration cannot be negative integer')
+    })
+    test('should return current obj as Json', () => {
+      const fakeWorkout = workoutFactory(fakeWorkoutArgs)
+      const json = fakeWorkout.toJson()
+
+      expect(json.id).toBe(fakeWorkout.id)
+      expect(json.name).toBe(fakeWorkout.name)
+      expect(json.userId).toBe(fakeWorkout.userId)
+      expect(json.day).toBe(fakeWorkout.day)
+      expect(json.finished).toBe(fakeWorkout.finished)
     })
   })
 })

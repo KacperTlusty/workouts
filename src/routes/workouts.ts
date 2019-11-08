@@ -10,7 +10,7 @@ export function makeWorkoutRouter (client: MongoClient): Router {
 
   router.post('/', handlers.create)
 
-  router.delete('/:workoutId', handlers.create)
+  router.delete('/:workoutId', handlers.deleteById)
 
   router.get('/:workoutId', handlers.getById)
 

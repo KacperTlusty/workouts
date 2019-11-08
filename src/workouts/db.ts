@@ -20,7 +20,7 @@ export function dbClient (client: MongoClient): WorkoutDb {
   }
 
   async function findById (id: string): Promise<WorkoutDbEntity> {
-    return getCollection().findOne<WorkoutDbEntity>({ id })
+    return getCollection().findOne<WorkoutDbEntity>({ _id: id })
   }
 
   async function findAll (): Promise<WorkoutDbEntity[]> {
@@ -32,7 +32,7 @@ export function dbClient (client: MongoClient): WorkoutDb {
   }
 
   async function deleteById (id: string): Promise<string> {
-    const { result, deletedCount } = await getCollection().deleteOne({ id })
+    const { result, deletedCount } = await getCollection().deleteOne({ _id: id })
     if (!result.ok || deletedCount === 0) {
       return 'Not found.'
     }
