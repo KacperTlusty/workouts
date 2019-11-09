@@ -74,6 +74,9 @@ describe('Workout request handlers', () => {
           name: 'fake name',
           userId: 'fake user id',
           fake: 'prop'
+        },
+        user: {
+          id: 'some fake user id'
         }
       }
     })
@@ -91,9 +94,6 @@ describe('Workout request handlers', () => {
         }))
       })
       mockRequest.body.exercises = fakeExercises
-      mockRequest.user = {
-        id: 'some fake user id'
-      }
       const create = makeCreate(controller)
       await create(mockRequest, mockResponse)
       expect(mockResponse.status).toHaveBeenCalledWith(201)
