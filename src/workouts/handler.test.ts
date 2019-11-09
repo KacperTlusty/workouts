@@ -91,9 +91,12 @@ describe('Workout request handlers', () => {
         }))
       })
       mockRequest.body.exercises = fakeExercises
+      mockRequest.user = {
+        id: 'some fake user id'
+      }
       const create = makeCreate(controller)
       await create(mockRequest, mockResponse)
-      expect(mockResponse.status).toHaveBeenCalledWith(200)
+      expect(mockResponse.status).toHaveBeenCalledWith(201)
       expect(mockResponse.status).toHaveBeenCalledTimes(1)
       expect(mockResponse.json).toHaveBeenCalledWith({
         id: 'fake id 1',
@@ -103,13 +106,13 @@ describe('Workout request handlers', () => {
       })
       expect(controller.create).toHaveBeenCalledWith({
         name: 'fake name',
-        userId: 'fake user id',
+        userId: 'some fake user id',
         exercises: fakeExercises
       })
       expect(mockResponse.json).toHaveBeenCalledTimes(1)
       done()
     })
-    test('should return 500 and error message when controller throws', async (done) => {
+    test('should return 400 and error message when controller throws', async (done) => {
       const create = makeCreate({
         getAll: jest.fn(),
         create: jest.fn(() => {
@@ -119,7 +122,7 @@ describe('Workout request handlers', () => {
         deleteById: jest.fn()
       })
       await create(mockRequest, mockResponse)
-      expect(mockResponse.status).toHaveBeenCalledWith(500)
+      expect(mockResponse.status).toHaveBeenCalledWith(400)
       expect(mockResponse.status).toHaveBeenCalledTimes(1)
       expect(mockResponse.json).toHaveBeenCalledTimes(1)
       expect(mockResponse.json).toHaveBeenCalledWith({ error: 'fake error' })

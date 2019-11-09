@@ -21,14 +21,14 @@ export function makeCreate ({
     try {
       const created = await create({
         name: req.body.name,
-        userId: req.body.userId,
+        userId: req.user.id,
         exercises: req.body.exercises,
         day: req.body.day,
         finished: req.body.finished
       })
-      return Promise.resolve(res.status(200).json(created))
+      return Promise.resolve(res.status(201).json(created))
     } catch (error) {
-      return Promise.resolve(res.status(500).json({ error: error.message }))
+      return Promise.resolve(res.status(400).json({ error: error.message }))
     }
   }
 }
