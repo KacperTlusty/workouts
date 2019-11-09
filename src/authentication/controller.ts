@@ -14,7 +14,8 @@ export function makeAuthController (
       })
       return {
         id: user.id,
-        email: user.email
+        email: user.email,
+        privilage: user.privilage
       }
     }
     return null
@@ -30,11 +31,13 @@ export function makeAuthController (
       id: foundUser._id,
       email,
       password,
-      age: foundUser.age
+      age: foundUser.age,
+      privilage: foundUser.privilage
     })
     if (user.password === foundUser.password) {
       return {
         id: foundUser._id,
+        privilage: user.privilage,
         email
       }
     }

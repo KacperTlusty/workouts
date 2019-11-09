@@ -1,5 +1,10 @@
 import { Request, Response } from 'express'
 
+export enum Privilage {
+  User = 'User',
+  Admin = 'Admin'
+}
+
 export interface MakeCreateUserArgs {
   validateId: (id: string) => boolean;
   hashPassword: (password: string) => string;
@@ -14,6 +19,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   password?: string;
+  privilage: Privilage;
   toJson: () => UserJson;
 }
 
@@ -24,6 +30,7 @@ export interface CreateUserArgs {
   lastName?: string;
   password?: string;
   id?: string;
+  privilage?: Privilage;
 }
 
 export interface UserController {
@@ -50,6 +57,7 @@ export interface UserDbEntity {
   firstName: string;
   lastName: string;
   password: string;
+  privilage: Privilage;
   age: number;
 }
 
@@ -61,4 +69,5 @@ export interface UserHandler {
 export interface UserAuth {
   id: string;
   email: string;
+  privilage: Express.Privilage;
 }

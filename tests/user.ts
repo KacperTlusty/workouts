@@ -1,5 +1,5 @@
 import { random, name, internet } from 'faker'
-import { CreateUserArgs } from '../src/users/types'
+import { CreateUserArgs, Privilage } from '../src/users/types'
 import cuid = require('cuid')
 
 export function fakeCreateUserArgs (args: any): CreateUserArgs {
@@ -9,6 +9,7 @@ export function fakeCreateUserArgs (args: any): CreateUserArgs {
     firstName: name.firstName(),
     lastName: name.lastName(),
     password: internet.password(12),
-    id: cuid()
+    id: cuid(),
+    privilage: Privilage.User
   }, args)
 }

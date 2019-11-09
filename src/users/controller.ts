@@ -13,7 +13,20 @@ function dbToArg (userDb: UserDbEntity): CreateUserArgs {
     firstName: userDb.firstName,
     lastName: userDb.lastName,
     email: userDb.email,
-    age: userDb.age
+    age: userDb.age,
+    privilage: userDb.privilage
+  }
+}
+
+function userToDbEntity (user: User): UserDbEntity {
+  return {
+    _id: user.id,
+    email: user.email,
+    privilage: user.privilage,
+    password: user.password,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    age: user.age
   }
 }
 
@@ -29,14 +42,7 @@ export function makeUserController (
       return makeUser(dbToArg(foundUser)).toJson()
     }
 
-    await db.insertOne({
-      _id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      age: user.age,
-      email: user.email,
-      password: user.password
-    })
+    await db.insertOne(userToDbEntity(user))
 
     return user.toJson()
   }
@@ -47,14 +53,7 @@ export function makeUserController (
       return null
     }
 
-    return makeUser({
-      id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      password: user.password,
-      age: user.age,
-      email: user.email
-    }).toJson()
+    return makeUser(dbToArg(user)).toJson()
   }
 
   return {

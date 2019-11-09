@@ -2,7 +2,8 @@ import {
   MakeCreateUserArgs,
   CreateUserArgs,
   User,
-  UserJson
+  UserJson,
+  Privilage
 } from './types'
 
 const MAX_USER_AGE = 100
@@ -20,7 +21,8 @@ export function makeCreateUser ({
     age,
     password,
     firstName,
-    lastName
+    lastName,
+    privilage = Privilage.User
   }: CreateUserArgs): User {
     if (!id) {
       id = createId()
@@ -54,7 +56,8 @@ export function makeCreateUser ({
       password,
       firstName,
       lastName,
-      toJson
+      toJson,
+      privilage
     })
 
     function toJson (): UserJson {

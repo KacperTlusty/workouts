@@ -1,5 +1,5 @@
 import { makeUserController } from './controller'
-import { UserController, CreateUserArgs } from './types'
+import { UserController, CreateUserArgs, Privilage } from './types'
 import { fakeCreateUserArgs } from '../../tests/user'
 
 describe('User controller', () => {
@@ -9,6 +9,7 @@ describe('User controller', () => {
     email: arg.email,
     firstName: arg.firstName,
     age: arg.age,
+    privilage: arg.privilage || Privilage.User,
     lastName: arg.lastName,
     toJson: (): any => ({
       id: arg.id,
@@ -58,7 +59,7 @@ describe('User controller', () => {
     test('should create new one and return created object', async (done) => {
       const mockDb: any = makeMockDb({
         findByEmail: jest.fn(() => null),
-        createOne: jest.fn((obj: any): any => obj)
+        insertOne: jest.fn((obj: any): any => obj)
       })
       const controller = makeUserController(
         mockDb,
@@ -71,6 +72,15 @@ describe('User controller', () => {
         lastName: fakeUser.lastName,
         firstName: fakeUser.firstName,
         age: fakeUser.age
+      })
+      expect(mockDb.insertOne).toHaveBeenCalledWith({
+        _id: fakeUser.id,
+        email: fakeUser.email,
+        lastName: fakeUser.lastName,
+        firstName: fakeUser.firstName,
+        privilage: Privilage.User,
+        age: fakeUser.age,
+        password: makeUser(fakeUser).password
       })
       done()
     })
