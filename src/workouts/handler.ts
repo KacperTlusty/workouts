@@ -54,7 +54,7 @@ export function makeDeleteById ({
 }: WorkoutController): (Request, Response) => Promise<Response> {
   return async function deleteWorkoutById (req: Request, res: Response): Promise<Response> {
     try {
-      const result = await deleteById(req.params.workoutId)
+      const result = await deleteById(req.params.workoutId, req.user)
       if (!result) {
         return res.status(404).json('Not Found')
       }

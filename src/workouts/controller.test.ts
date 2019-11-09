@@ -1,6 +1,7 @@
 import { makeCreate, makeFindAll, makeFindById, makeDeleteById } from './controller'
 import { makeFakeWorkoutArgs } from '../../tests/workout'
 import { WorkoutDb, MakeWorkoutArgs, Workout, WorkoutExercise, WorkoutJson } from './types'
+import { Privilage } from '../users/types'
 
 describe('Workout controller test suite', () => {
   let mockDb: WorkoutDb
@@ -177,28 +178,93 @@ describe('Workout controller test suite', () => {
     })
   })
   describe('deleteById', () => {
-    test('should use mapper', async (done) => {
+    test('should use mapper and delete object for admin', async (done) => {
       mockDb.deleteById = jest.fn(async () => Promise.resolve('Object removed.'))
       mockDb.findById = jest.fn(async (): Promise<any> => ({
-        finished: false
+        finished: false,
+        userId: 'not fake user id'
       }))
       const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
 
-      expect(await deleteById('fake by id')).toEqual('Object removed.')
+      expect(await deleteById('fake by id', {
+        id: 'fake user id',
+        email: 'fake@email.com',
+        privilage: Privilage.Admin
+      })).toEqual('Object removed.')
       expect(mockDb.deleteById).toHaveBeenCalledWith('fake by id')
       expect(mockDb.deleteById).toHaveBeenCalledTimes(1)
       done()
     })
-    test('should not allow to delete finished workout', async (done) => {
+    test('should allow to delete when user is creator of workout', async (done) => {
+      mockDb.deleteById = jest.fn(() => Promise.resolve('Object removed.'))
+      mockDb.findById = jest.fn(async (): Promise<any> => ({
+        finished: false,
+        userId: 'fake user id'
+      }))
+      const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
+
+      expect(await deleteById('fake by id', {
+        id: 'fake user id',
+        email: 'fake@email.com',
+        privilage: Privilage.User
+      })).toBe('Object removed.')
+      expect(mockDb.deleteById).toHaveBeenCalledTimes(1)
+      expect(mockDb.deleteById).toHaveBeenCalledWith('fake by id')
+      done()
+    })
+    test('should allow admin user to delete finished workout', async (done) => {
+      mockDb.deleteById = jest.fn(() => Promise.resolve('Object removed.'))
+      mockDb.findById = jest.fn(async (): Promise<any> => ({
+        finished: true,
+        userId: 'fake user id'
+      }))
+      const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
+
+      expect(await deleteById('fake by id', {
+        id: 'fake user id',
+        email: 'fake@email.com',
+        privilage: Privilage.Admin
+      }))
+      expect(mockDb.deleteById).toHaveBeenCalledWith('fake by id')
+      expect(mockDb.deleteById).toHaveBeenCalledTimes(1)
+      done()
+    })
+    test('should not allow to delete if userId does not match', async (done) => {
       mockDb.deleteById = jest.fn()
       mockDb.findById = jest.fn((): any => ({
-        finished: true
+        finished: false,
+        userId: 'not fake user id'
       }))
       const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
 
       let err: Error
       try {
-        await deleteById('fake id')
+        await deleteById('fake id', {
+          id: 'fake user id',
+          email: 'fake@email.com',
+          privilage: Privilage.User
+        })
+      } catch (error) {
+        err = error
+      }
+      expect(err).toEqual(new Error('Access denied.'))
+      done()
+    })
+    test('should not allow to delete finished workout for normal user', async (done) => {
+      mockDb.deleteById = jest.fn()
+      mockDb.findById = jest.fn((): any => ({
+        finished: true,
+        userId: 'fake user id'
+      }))
+      const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
+
+      let err: Error
+      try {
+        await deleteById('fake id', {
+          id: 'fake user id',
+          email: '',
+          privilage: Privilage.User
+        })
       } catch (error) {
         err = error
       }
@@ -212,7 +278,7 @@ describe('Workout controller test suite', () => {
       mockDb.findById = jest.fn(() => null)
       const deleteById = makeDeleteById(mockDb, mockWorkoutFactory)
 
-      const result = await deleteById('fake id')
+      const result = await deleteById('fake id', null)
 
       expect(result).toBeNull()
       expect(mockDb.deleteById).toHaveBeenCalledTimes(0)

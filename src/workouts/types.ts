@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { UserAuth } from '../users/types'
 
 export interface WorkoutExercise {
   exerciseId: string;
@@ -21,7 +22,7 @@ export interface WorkoutController {
   getAll: () => Promise<WorkoutJson[]>;
   create: (args: MakeWorkoutArgs) => Promise<WorkoutJson>;
   getById: (id: string) => Promise<WorkoutJson>;
-  deleteById: (id: string) => Promise<string>;
+  deleteById: (id: string, user: UserAuth) => Promise<string>;
 }
 
 export interface Workout {

@@ -5,6 +5,7 @@ import {
   MakeWorkoutArgs,
   WorkoutDb
 } from './types'
+import { UserAuth, Privilage } from '../users/types'
 
 export function makeCreate (
   db: WorkoutDb,
@@ -77,16 +78,21 @@ export function makeFindById (
 export function makeDeleteById (
   db: WorkoutDb,
   makeWorkout: (args: MakeWorkoutArgs) => Workout
-): (string) => Promise<string> {
-  return async function deleteById (id: string): Promise<string> {
+): (id: string, user: UserAuth) => Promise<string> {
+  return async function deleteById (id: string, user: UserAuth): Promise<string> {
     const found = await db.findById(id)
     if (!found) {
       return null
     }
-    if (makeWorkout({
+
+    const workout: Workout = makeWorkout({
       ...found,
       id: found._id
-    }).finished) {
+    })
+    if (user.id !== workout.userId && user.privilage !== Privilage.Admin) {
+      throw new Error('Access denied.')
+    }
+    if (workout.finished && user.privilage !== Privilage.Admin) {
       throw new Error('Cannot delete finished workout')
     }
     return db.deleteById(id)
