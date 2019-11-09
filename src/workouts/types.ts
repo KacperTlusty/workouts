@@ -47,9 +47,9 @@ export interface WorkoutDbEntity {
 export interface MakeWorkoutArgs {
   id?: string;
   name: string;
-  exercises?: WorkoutExercise[];
-  userId?: string;
-  day?: number;
+  exercises: WorkoutExercise[];
+  userId: string;
+  day: number;
   finished?: boolean;
 }
 

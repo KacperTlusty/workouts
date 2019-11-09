@@ -22,7 +22,9 @@ export function makeCreate ({
       const created = await create({
         name: req.body.name,
         userId: req.body.userId,
-        exercises: req.body.exercises
+        exercises: req.body.exercises,
+        day: req.body.day,
+        finished: req.body.finished
       })
       return Promise.resolve(res.status(200).json(created))
     } catch (error) {
