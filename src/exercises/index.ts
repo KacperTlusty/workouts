@@ -13,13 +13,11 @@ import {
 } from './controller'
 import makeExercise from './model'
 
-const makeHash = crypto.createHash('md5')
-
 const exercise = makeExercise({
   createId: cuid,
   validateId: isCuid,
   isUrl: (url) => isHttpUri(url) !== undefined || isHttpsUri(url) !== undefined,
-  createHash: (text) => makeHash.update(text).digest('hex')
+  createHash: (text) => crypto.createHash('md5').update(text).digest('hex')
 })
 
 export function makeHandlers (client: MongoClient): ExerciseHandler {
