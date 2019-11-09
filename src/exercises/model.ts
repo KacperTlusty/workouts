@@ -18,7 +18,7 @@ export default function makeModel ({
     mobility = '',
     difficulty = '',
     id = '',
-    hash
+    bodypart = ''
   }: ExerciseArgs): Exercise {
     if (!id) {
       id = createId()
@@ -47,12 +47,11 @@ export default function makeModel ({
         type,
         picture,
         mobility,
-        difficulty
+        difficulty,
+        bodypart
       }
     }
-    if (!hash) {
-      hash = createHash(name + type)
-    }
+    const hash = createHash(name + type)
 
     return Object.freeze({
       id,
@@ -60,6 +59,7 @@ export default function makeModel ({
       name,
       type,
       picture,
+      bodypart,
       mobility,
       difficulty,
       toJson

@@ -1,31 +1,22 @@
 import {
-  ExerciseDbEntity,
   ExerciseJson,
   MakeCreateExercise,
-  MakeExerciseArgs
+  ExerciseArgs
 } from './types'
-
-function dbToJson (exercise: ExerciseDbEntity): ExerciseJson {
-  return {
-    id: exercise._id,
-    name: exercise.name,
-    type: exercise.type,
-    mobility: exercise.mobility,
-    picture: exercise.picture,
-    difficulty: exercise.difficulty
-  }
-}
 
 export function makeCreateExercise ({
   db,
   makeExercise
 }: MakeCreateExercise): (MakeExerciseArgs) => Promise<ExerciseJson> {
-  return async function (args: MakeExerciseArgs): Promise<ExerciseJson> {
+  return async function (args: ExerciseArgs): Promise<ExerciseJson> {
     const exercise = makeExercise(args)
 
     const found = await db.findByHash(exercise.hash)
     if (found) {
-      return dbToJson(found)
+      return makeExercise({
+        ...found,
+        id: found._id
+      }).toJson()
     }
 
     const created = await db.create({
@@ -35,10 +26,14 @@ export function makeCreateExercise ({
       mobility: exercise.mobility,
       picture: exercise.picture,
       difficulty: exercise.difficulty,
-      hash: exercise.hash
+      hash: exercise.hash,
+      bodypart: exercise.bodypart
     })
 
-    return Object.freeze(dbToJson(created))
+    return makeExercise({
+      ...created,
+      id: created._id
+    }).toJson()
   }
 }
 

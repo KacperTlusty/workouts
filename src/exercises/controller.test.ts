@@ -27,6 +27,7 @@ describe('Exercise controller', () => {
       picture: arg.picture,
       mobility: arg.mobility,
       hash: 'fake hash',
+      bodypart: arg.bodypart,
       toJson: function (): ExerciseJson {
         return {
           id: this.id,
@@ -34,7 +35,8 @@ describe('Exercise controller', () => {
           difficulty: this.difficulty,
           type: this.type,
           picture: this.picture,
-          mobility: this.mobility
+          mobility: this.mobility,
+          bodypart: this.bodypart
         }
       }
     }))
@@ -54,6 +56,7 @@ describe('Exercise controller', () => {
       expect(exerciseJson.type).toBe(exerciseMock.type)
       expect(exerciseJson.picture).toBe(exerciseMock.picture)
       expect(exerciseJson.difficulty).toBe(exerciseMock.difficulty)
+      expect(exerciseJson.bodypart).toBe(exerciseMock.bodypart)
       expect(mockDb.create).toHaveBeenCalledTimes(1)
       expect(mockDb.create).toHaveBeenCalledWith({
         _id: exerciseMock.id,
@@ -62,7 +65,8 @@ describe('Exercise controller', () => {
         type: exerciseMock.type,
         picture: exerciseMock.picture,
         difficulty: exerciseMock.difficulty,
-        mobility: exerciseMock.mobility
+        mobility: exerciseMock.mobility,
+        bodypart: exerciseMock.bodypart
       })
       done()
     })

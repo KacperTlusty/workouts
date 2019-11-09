@@ -48,7 +48,8 @@ describe('Exercise model', () => {
         type: mockExercise.type,
         difficulty: mockExercise.difficulty,
         picture: mockExercise.picture,
-        mobility: mockExercise.mobility
+        mobility: mockExercise.mobility,
+        bodypart: mockExercise.bodypart
       })
     })
     test('should return hash from name and type', () => {

@@ -9,6 +9,7 @@ export function fakeExercise (args: any = {}): ExerciseJson {
     type: random.word(),
     difficulty: random.word(),
     mobility: random.word(),
-    picture: internet.url()
+    picture: internet.url(),
+    bodypart: random.word()
   }, args)
 }

@@ -4,9 +4,10 @@ export interface Exercise {
   id: string;
   name: string;
   type: string;
-  difficulty?: string;
-  mobility?: string;
-  picture?: string;
+  difficulty: string;
+  mobility: string;
+  picture: string;
+  bodypart: string;
   toJson: () => ExerciseJson;
   hash: string;
 }
@@ -25,12 +26,12 @@ export interface ExerciseArgs {
   difficulty?: string;
   mobility?: string;
   picture?: string;
-  hash?: string;
+  bodypart?: string;
 }
 
 export interface ExerciseController {
   getAll: () => Promise<ExerciseJson[]>;
-  create: (args: MakeExerciseArgs) => Promise<ExerciseJson>;
+  create: (args: ExerciseArgs) => Promise<ExerciseJson>;
   getById: (id: string) => Promise<ExerciseJson>;
   deleteById: (id: string) => Promise<ExerciseJson>;
 }
@@ -49,6 +50,7 @@ export interface ExerciseJson {
   picture: string;
   difficulty: string;
   mobility: string;
+  bodypart: string;
 }
 
 export interface ExerciseDbEntity {
@@ -59,14 +61,7 @@ export interface ExerciseDbEntity {
   difficulty: string;
   mobility: string;
   hash: string;
-}
-
-export interface MakeExerciseArgs {
-  name: string;
-  type: string;
-  picture?: string;
-  difficulty?: string;
-  mobility?: string;
+  bodypart: string;
 }
 
 export interface MakeCreateExercise {

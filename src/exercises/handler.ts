@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
 import {
   ExerciseController,
-  ExerciseHandler
+  ExerciseHandler,
+  ExerciseJson
 } from './types'
 
 export function makeExerciseHandlers ({
@@ -21,12 +22,13 @@ export function makeExerciseHandlers ({
 
   async function createOneHandler (req: Request, res: Response): Promise<Response> {
     try {
-      const exercise = await create({
+      const exercise: ExerciseJson = await create({
         name: req.body.name,
         type: req.body.type,
         difficulty: req.body.difficulty,
         mobility: req.body.mobility,
-        picture: req.body.picture
+        picture: req.body.picture,
+        bodypart: req.body.bodypart
       })
       return res.status(201).json(exercise)
     } catch (error) {
