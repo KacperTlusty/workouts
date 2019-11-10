@@ -1,12 +1,13 @@
 import { Strategy, VerifiedCallback, ExtractJwt, VerifyCallback } from 'passport-jwt'
-import { JwtAuthController, JwtPayload } from '../types'
+import { JwtAuthController } from '../types'
+import { UserAuth } from '../../users/types'
 
 export function makeJwtStrategy (
   controller: JwtAuthController
 ): Strategy {
-  const verifyFunction: VerifyCallback = async (payload: JwtPayload, done: VerifiedCallback): Promise<void> => {
+  const verifyFunction: VerifyCallback = async (payload: UserAuth, done: VerifiedCallback): Promise<void> => {
     try {
-      const user = await controller.findById(payload.sub)
+      const user = await controller.findById(payload.id)
       if (user) {
         return Promise.resolve(done(null, user))
       }
