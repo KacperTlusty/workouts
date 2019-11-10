@@ -10,7 +10,7 @@ describe('AuthDb', () => {
       const authDb = makeAuthDb(collection)
       expect(await authDb.findById('fake id')).toEqual('fake found')
       expect(collection.findOne).toHaveBeenCalledTimes(1)
-      expect(collection.findOne).toHaveBeenCalledWith({ id: 'fake id' })
+      expect(collection.findOne).toHaveBeenCalledWith({ _id: 'fake id' })
       done()
     })
   })
