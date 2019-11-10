@@ -52,7 +52,7 @@ export function makeExerciseHandlers ({
 
   async function deleteByIdHandler (req: Request, res: Response): Promise<Response | void> {
     try {
-      const deleted = await deleteById(req.params.exerciseId)
+      const deleted = await deleteById(req.params.exerciseId, req.user)
       if (deleted) {
         return res.status(204).end()
       }

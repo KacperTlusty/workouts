@@ -3,6 +3,7 @@ import {
   MakeCreateExercise,
   ExerciseArgs
 } from './types'
+import { UserAuth, Privilage } from '../users/types'
 
 export function makeCreateExercise ({
   db,
@@ -66,8 +67,12 @@ export function makeFindById ({
 export function makeDeleteById ({
   db,
   makeExercise
-}: MakeCreateExercise): (string) => Promise<ExerciseJson> {
-  return async function deleteById (id: string): Promise<ExerciseJson> {
+}: MakeCreateExercise): (id: string, user: UserAuth) => Promise<ExerciseJson> {
+  return async function deleteById (id: string, user: UserAuth): Promise<ExerciseJson> {
+    if (user.privilage !== Privilage.Admin) {
+      throw new Error('Access denied.')
+    }
+
     const foundExercise = await db.findById(id)
 
     if (!foundExercise) {
