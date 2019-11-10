@@ -6,6 +6,7 @@ import {
   ExerciseDbEntity,
   Exercise
 } from './types'
+import { Privilage } from '../users/types'
 import cuid = require('cuid')
 
 describe('Exercise controller', () => {
@@ -150,7 +151,7 @@ describe('Exercise controller', () => {
     beforeEach(() => {
       fakeObject = fakeExercise()
     })
-    test('should return deleted object', async (done) => {
+    test('should allow admin to delete', async (done) => {
       mockDb.findById = jest.fn(async () => ({
         _id: fakeObject.id,
         hash: 'fake hash',
@@ -162,7 +163,11 @@ describe('Exercise controller', () => {
         makeExercise: makeExerciseMock
       })
 
-      const result = await deleteById('fake id')
+      const result = await deleteById('fake id', {
+        id: 'fake id',
+        email: 'fake@email.com',
+        privilage: Privilage.Admin
+      })
 
       expect(mockDb.deleteById).toHaveBeenCalledTimes(1)
       expect(mockDb.deleteById).toHaveBeenCalledWith(fakeObject.id)
@@ -181,7 +186,11 @@ describe('Exercise controller', () => {
         makeExercise: makeExerciseMock
       })
 
-      const result = await deleteById('fake id')
+      const result = await deleteById('fake id', {
+        id: 'fake id',
+        email: 'fake@email.com',
+        privilage: Privilage.Admin
+      })
 
       expect(mockDb.deleteById).toHaveBeenCalledTimes(1)
       expect(mockDb.deleteById).toHaveBeenCalledWith(fakeObject.id)
@@ -195,10 +204,40 @@ describe('Exercise controller', () => {
         makeExercise: makeExerciseMock
       })
 
-      const result = await deleteById('fake id')
+      const result = await deleteById('fake id', {
+        id: 'fake id',
+        email: 'fake@email.com',
+        privilage: Privilage.Admin
+      })
 
       expect(mockDb.findById).toHaveBeenCalledWith('fake id')
       expect(result).toBeNull()
+      done()
+    })
+    test('should not allow user without admin privilage to delete', async (done) => {
+      mockDb.findById = jest.fn(async () => ({
+        _id: fakeObject.id,
+        hash: 'fake hash',
+        ...fakeObject
+      }))
+      const deleteById = makeDeleteById({
+        db: mockDb,
+        makeExercise: makeExerciseMock
+      })
+
+      let error: Error
+      try {
+        await deleteById('fake id', {
+          id: 'fake id',
+          email: 'fake@email.com',
+          privilage: Privilage.User
+        })
+      } catch (e) {
+        error = e
+      }
+
+      expect(error).toEqual(new Error('Access denied.'))
+      expect(mockDb.deleteById).toHaveBeenCalledTimes(0)
       done()
     })
   })

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { UserAuth } from '../users/types'
 
 export interface Exercise {
   id: string;
@@ -33,7 +34,7 @@ export interface ExerciseController {
   getAll: () => Promise<ExerciseJson[]>;
   create: (args: ExerciseArgs) => Promise<ExerciseJson>;
   getById: (id: string) => Promise<ExerciseJson>;
-  deleteById: (id: string) => Promise<ExerciseJson>;
+  deleteById: (id: string, user: UserAuth) => Promise<ExerciseJson>;
 }
 
 export interface ExerciseHandler {

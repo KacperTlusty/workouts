@@ -1,6 +1,7 @@
 import { makeExerciseHandlers } from './handler'
 import { ExerciseHandler } from './types'
 import { fakeExercise } from '../../tests/exercise'
+import { Privilage } from '../users/types'
 
 describe('exercise handlers test', () => {
   let mockResponse
@@ -155,6 +156,11 @@ describe('exercise handlers test', () => {
       mockRequest = {
         params: {
           exerciseId: 'fake exercise id'
+        },
+        user: {
+          id: 'fake id',
+          email: 'fake@email.com',
+          privilage: Privilage.Admin
         }
       }
     })
